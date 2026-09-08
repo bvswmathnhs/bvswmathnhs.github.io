@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quick Content Editor — BVSW Math NHS</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="assets/math-nhs-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  .quick-wrap{max-width:880px;margin:0 auto;padding:48px 24px 72px}.quick-top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:24px}.quick-grid{display:grid;gap:18px}.quick-block{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:20px}.quick-block h3{margin:0 0 6px}.quick-block p{margin-top:0}.quick-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.quick-fields label{display:grid;gap:6px;font-family:var(--font-mono);font-size:.74rem;color:var(--slate)}.quick-fields input,.quick-fields textarea{width:100%;padding:10px 11px;border:1px solid var(--line);border-radius:var(--radius);font:inherit;font-family:var(--font-body);color:var(--ink);background:var(--white)}.quick-fields textarea{min-height:92px;resize:vertical}.wide{grid-column:1/-1}.quick-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px}.save-msg{font-size:.85rem;color:var(--slate)}.save-msg.ok{color:#286043}.save-msg.err{color:#8a2e2e}.gate-card{max-width:460px;margin:72px auto;padding:24px;background:var(--white);border:1px solid var(--line);border-radius:var(--radius)}.gate-card input{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:var(--radius);margin-bottom:10px;font:inherit}@media(max-width:700px){.quick-fields{grid-template-columns:1fr}.wide{grid-column:auto}.quick-top{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<nav class="site-nav"><div class="wrap"><a class="brand" href="index.html"><img class="brand-logo" src="assets/math-nhs-logo.png" alt=""><span class="name">BVSW Math NHS</span></a><ul class="nav-links" style="position:static;"><li><a href="portal-4q7z.html">Full officer portal</a></li><li><a href="index.html">Back to site</a></li></ul></div></nav>
+
+<form id="gate" class="gate-card">
+  <p class="eyebrow" style="justify-content:center;">Officers only</p>
+  <h3 style="text-align:center;">Quick content editor</h3>
+  <input id="email" type="email" placeholder="Officer email" autocomplete="username" required>
+  <input id="password" type="password" placeholder="Password" autocomplete="current-password" required>
+  <button class="btn btn-navy" style="width:100%;justify-content:center;" type="submit">Sign in</button>
+  <p id="gateMsg" class="save-msg"></p>
+</form>
+
+<main id="editor" class="quick-wrap" hidden>
+  <div class="quick-top"><div><p class="eyebrow">No-code quick editor</p><h1 style="font-size:clamp(2rem,4vw,2.8rem);margin-bottom:8px;">Edit only what you need.</h1><p style="color:var(--slate);margin:0;">Each block saves by itself. You do not need to fill out unrelated sections.</p></div><button id="logout" class="btn btn-outline" type="button">Sign out</button></div>
+  <div class="quick-grid">
+    <section class="quick-block">
+      <h3>Monthly poster</h3><p class="note">The button appears on the Posters page only when a valid HTTPS link is saved.</p>
+      <div class="quick-fields">
+        <label>Month label<input id="posterMonth" maxlength="80"></label>
+        <label>Theme or headline<input id="posterTheme" maxlength="140"></label>
+        <label class="wide">Monthly details<textarea id="posterDescription" maxlength="700"></textarea></label>
+        <label>Due-date label<input id="posterDue" maxlength="120"></label>
+        <label>Poster / submission link<input id="posterLink" type="url" placeholder="https://..."></label>
+      </div>
+      <div class="quick-actions"><button id="savePoster" class="btn btn-navy" type="button">Save poster section</button><span id="posterMsg" class="save-msg"></span></div>
+    </section>
+
+    <section class="quick-block">
+      <h3>Homepage box 1</h3>
+      <div class="quick-fields"><label>Top label<input id="card1Num" maxlength="80"></label><label>Heading<input id="card1Title" maxlength="120"></label><label class="wide">Text<textarea id="card1Body" maxlength="400"></textarea></label></div>
+      <div class="quick-actions"><button class="btn btn-navy save-card" data-card="0" type="button">Save box 1</button><span id="card0Msg" class="save-msg"></span></div>
+    </section>
+
+    <section class="quick-block">
+      <h3>Homepage box 2</h3>
+      <div class="quick-fields"><label>Top label<input id="card2Num" maxlength="80"></label><label>Heading<input id="card2Title" maxlength="120"></label><label class="wide">Text<textarea id="card2Body" maxlength="400"></textarea></label></div>
+      <div class="quick-actions"><button class="btn btn-navy save-card" data-card="1" type="button">Save box 2</button><span id="card1Msg" class="save-msg"></span></div>
+    </section>
+
+    <section class="quick-block">
+      <h3>Homepage box 3</h3>
+      <div class="quick-fields"><label>Top label<input id="card3Num" maxlength="80"></label><label>Heading<input id="card3Title" maxlength="120"></label><label class="wide">Text<textarea id="card3Body" maxlength="400"></textarea></label></div>
+      <div class="quick-actions"><button class="btn btn-navy save-card" data-card="2" type="button">Save box 3</button><span id="card2Msg" class="save-msg"></span></div>
+    </section>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/supabase-config.js"></script>
+<script>
+const sb = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+const defaults = [
+  {num:"25 pts",title:"Required for induction",body:"Earned across the school year through any mix of opportunities on the Events & Points page."},
+  {num:"Live sheet",title:"Track your points",body:"Officers keep a running spreadsheet of everyone's totals, updated regularly."},
+  {num:"1 pt each",title:"Optional monthly posters",body:"Posters are simply an easy monthly way to earn an extra point — they are not required for membership."}
+];
+let content = null;
+function msg(id,text,kind=""){const el=document.getElementById(id);el.textContent=text;el.className=`save-msg ${kind}`.trim();}
+function safeHttps(raw){try{const u=new URL(String(raw||"").trim());return u.protocol==="https:"?u.toString():""}catch{return ""}}
+async function load(){const {data,error}=await sb.from("site_content").select("poster,events_points").eq("id",1).maybeSingle();if(error||!data)throw error||new Error("No site content row found");content=data;const p=data.poster&&typeof data.poster==="object"?data.poster:{};posterMonth.value=p.month||"";posterTheme.value=p.theme||"";posterDescription.value=p.description||"";posterDue.value=p.due||"";posterLink.value=p.link_url||"";const cards=data.events_points&&typeof data.events_points==="object"&&Array.isArray(data.events_points.home_cards)?data.events_points.home_cards:defaults;cards.slice(0,3).forEach((c,i)=>{document.getElementById(`card${i+1}Num`).value=c.num||"";document.getElementById(`card${i+1}Title`).value=c.title||"";document.getElementById(`card${i+1}Body`).value=c.body||"";});}
+async function openEditor(user){const {data:officer}=await sb.from("officers").select("user_id").eq("user_id",user.id).maybeSingle();if(!officer){await sb.auth.signOut();throw new Error("This account is not registered as a Math NHS officer.");}await load();gate.hidden=true;editor.hidden=false;}
+gate.addEventListener("submit",async(e)=>{e.preventDefault();msg("gateMsg","Signing in…");const {data,error}=await sb.auth.signInWithPassword({email:email.value.trim(),password:password.value});if(error||!data.user){msg("gateMsg",error?.message||"Sign in failed.","err");return;}try{await openEditor(data.user);msg("gateMsg","");}catch(err){msg("gateMsg",err.message,"err");}});
+logout.addEventListener("click",async()=>{await sb.auth.signOut();editor.hidden=true;gate.hidden=false;password.value="";});
+savePoster.addEventListener("click",async()=>{const raw=posterLink.value.trim(),link=raw?safeHttps(raw):"";if(raw&&!link){msg("posterMsg","Link must start with https://","err");return;}const poster={...(content?.poster||{}),month:posterMonth.value.trim(),theme:posterTheme.value.trim(),description:posterDescription.value.trim(),due:posterDue.value.trim(),link_url:link};msg("posterMsg","Saving…");const {error}=await sb.from("site_content").update({poster,updated_at:new Date().toISOString()}).eq("id",1);if(error){msg("posterMsg",`Save failed: ${error.message}`,"err");return;}content.poster=poster;msg("posterMsg","Saved. Only the poster section changed.","ok");});
+document.querySelectorAll(".save-card").forEach(btn=>btn.addEventListener("click",async()=>{const i=Number(btn.dataset.card);const card={num:document.getElementById(`card${i+1}Num`).value.trim(),title:document.getElementById(`card${i+1}Title`).value.trim(),body:document.getElementById(`card${i+1}Body`).value.trim()};const eventsPoints={...(content?.events_points||{})};const cards=Array.isArray(eventsPoints.home_cards)?[...eventsPoints.home_cards]:defaults.map(c=>({...c}));while(cards.length<3)cards.push({...defaults[cards.length]});cards[i]=card;eventsPoints.home_cards=cards;msg(`card${i}Msg`,"Saving…");const {error}=await sb.from("site_content").update({events_points:eventsPoints,updated_at:new Date().toISOString()}).eq("id",1);if(error){msg(`card${i}Msg`,`Save failed: ${error.message}`,"err");return;}content.events_points=eventsPoints;msg(`card${i}Msg`,`Saved. Only box ${i+1} changed.`,"ok");}));
+(async()=>{const {data}=await sb.auth.getUser();if(data?.user){try{await openEditor(data.user);}catch(err){msg("gateMsg",err.message,"err");}}})();
+</script>
+</body>
+</html>
