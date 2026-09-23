@@ -348,7 +348,7 @@
           role.textContent = member.role || "Board member";
           const name = document.createElement("span");
           name.className = "name";
-          name.textContent = member.name || "";
+          name.textContent = member.name || ""; if (member.email) { const email = document.createElement("a"); email.href = "mailto:" + member.email; email.textContent = member.email; email.style.cssText = "display:block;color:var(--teal);font-size:.82rem;margin-top:5px;text-decoration:none;"; card.appendChild(email); }
           card.append(role, name);
           officers.appendChild(card);
         });
