@@ -355,6 +355,28 @@
       }
     }
 
+    const importantLinks = document.getElementById("importantLinks");
+    if (importantLinks && Array.isArray(data.important_links)) {
+      importantLinks.replaceChildren();
+      data.important_links.filter(item => item && item.url).forEach(item => {
+        const url = safeSiteLink(item.url);
+        if (!url) return;
+        const card = document.createElement("a");
+        card.className = "card";
+        card.href = url;
+        card.target = "_blank";
+        card.rel = "noopener";
+        card.style.cssText = "text-decoration:none;display:block;";
+        const title = document.createElement("h3");
+        title.textContent = item.title || "Open link";
+        const description = document.createElement("p");
+        description.textContent = item.description || "";
+        card.append(title, description);
+        importantLinks.appendChild(card);
+      });
+      if (!importantLinks.children.length) importantLinks.innerHTML = '<div class="card" style="grid-column:1/-1"><h3>Links coming soon</h3><p>Important member links will appear here.</p></div>';
+    }
+
     const poster = data.poster && typeof data.poster === "object" ? data.poster : {};
     const posterFields = {
       posterMonth: poster.month,
