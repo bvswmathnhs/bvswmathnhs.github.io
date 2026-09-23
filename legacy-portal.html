@@ -90,43 +90,9 @@
     <button class="btn btn-outline portal-main-tab" type="button" role="tab" aria-selected="false" data-portal-tab="upcoming">Upcoming event</button>
   </div>
 
-  <div class="portal-tab-panel" id="portalPanelMeetings" role="tabpanel">
-  <p class="eyebrow" style="justify-content:center;">This meeting's attendance</p>
-  <h2>Update attendance check-in</h2>
+  <div class="portal-tab-panel" id="portalPanelMeetings" role="tabpanel"><p class="eyebrow" style="justify-content:center;">Meeting notes</p><h2>Meeting notes moved</h2><p class="note">Use the regular editor for meeting dates, descriptions, and up to 10 per-meeting links. This legacy portal no longer manages meeting check-ins.</p><a class="btn btn-navy" href="editor.html">Open regular editor →</a></div>
 
-  <div style="display:flex;gap:8px;justify-content:center;margin:18px 0;">
-    <button type="button" class="btn btn-ghost portal-mode-button active" id="modeQR" aria-pressed="true">Attendance QR</button>
-    <button type="button" class="btn btn-ghost portal-mode-button" id="modeLink" aria-pressed="false">Attendance link</button>
-  </div>
-
-  <div id="qrMode">
-    <div class="current" id="qrPreview">No QR code uploaded yet</div>
-    <input type="file" id="qrUpload" accept="image/*">
-    <button class="btn btn-outline" type="button" id="clearQrBtn" style="margin-top:12px;">Clear attendance QR</button>
-  </div>
-
-  <div id="linkMode" style="display:none;">
-    <p class="note" style="text-align:left;margin-top:0;">Use the attendance/check-in URL for this meeting. This is not a video-call or meeting-join link.</p>
-    <input type="url" id="linkInput" placeholder="https://attendance-link..." style="width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:4px;font-family:var(--font-mono);">
-    <button class="btn btn-navy" type="button" id="saveLinkBtn" style="margin-top:12px;">Save attendance link</button>
-    <p class="note" style="text-align:left;">Leave the field blank and save to clear the old link.</p>
-  </div>
-
-  <p class="form-msg" id="adminMsg"></p>
-  <p class="note" style="text-align:left;">This updates instantly for every visitor on the Meetings page &mdash; no re-upload needed.</p>
-
-  <hr style="border:none;border-top:1px solid var(--line);margin:28px 0;">
-
-  <p class="eyebrow" style="justify-content:center;">This week's slides</p>
-  <p class="note" style="text-align:left;margin-top:0;">Paste a published Google Slides URL below. You can paste either the published viewing link or an embed link; the portal will automatically convert it to the correct embed format.</p>
-  <input type="url" id="slidesInput" placeholder="https://docs.google.com/presentation/d/e/.../pub?..." style="width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:4px;font-family:var(--font-mono);font-size:0.85rem;">
-  <button class="btn btn-navy" type="button" id="saveSlidesBtn" style="margin-top:12px;">Save slides</button>
-  <p class="note" style="text-align:left;">Leave the field blank and save to clear the old slides.</p>
-  <p class="form-msg" id="slidesMsg"></p>
-
-  </div>
-
-  <div class="portal-tab-panel" id="portalPanelWork" role="tabpanel" hidden>
+<div class="portal-tab-panel" id="portalPanelWork" role="tabpanel" hidden>
 <section class="portal-messages" aria-labelledby="boardMessagesTitle">
     <p class="eyebrow" style="justify-content:center;">Board inbox</p>
     <h2 id="boardMessagesTitle">Website messages</h2>
@@ -400,12 +366,12 @@
     if (meetingErr) console.error("Could not load meeting access:", meetingErr);
     if (data && data.kind === "qr" && data.value) {
       showQrPreview(data.value);
-      setAttendanceMode("qr");
+      setmeeting check-inMode("qr");
     } else if (data && data.kind === "link" && data.value) {
       document.getElementById("linkInput").value = data.value;
-      setAttendanceMode("link");
+      setmeeting check-inMode("link");
     } else {
-      setAttendanceMode("qr");
+      setmeeting check-inMode("qr");
     }
     const { data: slides, error: slidesLoadErr } = await sb.from("current_slides").select("*").eq("id", 1).maybeSingle();
     if (slidesLoadErr) console.error("Could not load slides:", slidesLoadErr);
@@ -414,7 +380,7 @@
     }
   }
 
-  function setAttendanceMode(mode) {
+  function setmeeting check-inMode(mode) {
     const isQr = mode === "qr";
     document.getElementById("qrMode").style.display = isQr ? "block" : "none";
     document.getElementById("linkMode").style.display = isQr ? "none" : "block";
@@ -424,8 +390,8 @@
     document.getElementById("modeLink").setAttribute("aria-pressed", String(!isQr));
   }
 
-  document.getElementById("modeQR").addEventListener("click", () => setAttendanceMode("qr"));
-  document.getElementById("modeLink").addEventListener("click", () => setAttendanceMode("link"));
+  document.getElementById("modeQR").addEventListener("click", () => setmeeting check-inMode("qr"));
+  document.getElementById("modeLink").addEventListener("click", () => setmeeting check-inMode("link"));
 
   function safeHttpsUrl(rawUrl) {
     try {
@@ -480,10 +446,10 @@
     const msg = document.getElementById("adminMsg");
     const rawUrl = document.getElementById("linkInput").value.trim();
     const url = rawUrl ? safeHttpsUrl(rawUrl) : null;
-    if (rawUrl && !url) { msg.textContent = "Enter a valid https:// attendance link."; msg.className = "form-msg err"; return; }
+    if (rawUrl && !url) { msg.textContent = "Enter a valid https:// meeting check-in link."; msg.className = "form-msg err"; return; }
     const { error: saveLinkErr } = await sb.from("current_meeting_access").upsert({ id: 1, kind: url ? "link" : null, value: url || null, updated_at: new Date().toISOString() });
     if (saveLinkErr) { console.error("Meeting link save failed:", saveLinkErr); msg.textContent = `Save failed: ${saveLinkErr.message}`; msg.className = "form-msg err"; return; }
-    msg.textContent = url ? "Live on the Meetings page." : "Attendance link cleared.";
+    msg.textContent = url ? "Live on the Meetings page." : "meeting check-in link cleared.";
     msg.className = "form-msg ok";
   });
 
@@ -493,7 +459,7 @@
     if (clearQrErr) { console.error("QR reset failed:", clearQrErr); msg.textContent = `Clear failed: ${clearQrErr.message}`; msg.className = "form-msg err"; return; }
     document.getElementById("qrUpload").value = "";
     showQrPreview(null);
-    msg.textContent = "Attendance QR cleared.";
+    msg.textContent = "meeting check-in QR cleared.";
     msg.className = "form-msg ok";
   });
 
