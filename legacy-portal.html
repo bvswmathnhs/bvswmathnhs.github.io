@@ -161,17 +161,7 @@
       <button class="btn btn-outline" type="button" id="addEventCardBtn">Add event card</button>
     </div>
 
-    <div class="content-editor-block">
-      <h3>Board members</h3>
-      <div class="content-fields">
-        <label class="field-wide">School year<input id="boardYearInput" type="text" maxlength="30" placeholder="2026–2027"></label>
-      </div>
-      <div class="repeat-editor-list" id="boardEditor"></div>
-      <button class="btn btn-outline" type="button" id="addBoardMemberBtn">Add board member</button>
-      <p class="note">If the list is empty, the homepage automatically shows “New board roster coming soon.”</p>
-    </div>
-
-    <button class="btn btn-navy" type="button" id="saveSiteContentBtn" style="margin-top:20px;">Save site content</button>
+        <button class="btn btn-navy" type="button" id="saveSiteContentBtn" style="margin-top:20px;">Save site content</button>
     <p class="form-msg" id="siteContentMsg" role="status"></p>
   </div>
 
@@ -623,7 +613,6 @@
     document.getElementById("posterDescriptionInput").value = poster.description || "";
     document.getElementById("posterDueInput").value = poster.due || "";
     document.getElementById("pointsTrackerInput").value = data.points_tracker_url || "";
-    document.getElementById("boardYearInput").value = data.board_year || "";
 
     const eventsPoints = data.events_points && typeof data.events_points === "object" && !Array.isArray(data.events_points)
       ? { ...EVENTS_POINTS_DEFAULTS, ...data.events_points }
@@ -643,9 +632,6 @@
     eventCards.replaceChildren();
     (Array.isArray(eventsPoints.events) ? eventsPoints.events : []).forEach((item) => eventCards.appendChild(makeEventCardRow(item)));
 
-    const board = document.getElementById("boardEditor");
-    board.replaceChildren();
-    (Array.isArray(data.board_members) ? data.board_members : []).forEach((member) => board.appendChild(makeBoardRow(member)));
   }
 
   async function loadSiteContent() {
@@ -672,9 +658,6 @@
       return;
     }
     list.appendChild(makeAnnouncementRow());
-  });
-  document.getElementById("addBoardMemberBtn").addEventListener("click", () => {
-    document.getElementById("boardEditor").appendChild(makeBoardRow());
   });
   document.getElementById("addPointsOpportunityBtn").addEventListener("click", () => {
     document.getElementById("pointsOpportunitiesEditor").appendChild(makePointsRow());
@@ -710,16 +693,6 @@
       return;
     }
 
-    const boardMembers = [...document.querySelectorAll(".board-row")].map((row) => ({
-      role: row.querySelector(".board-role").value.trim(),
-      name: row.querySelector(".board-name").value.trim()
-    })).filter((member) => member.role || member.name);
-    if (boardMembers.some((member) => !member.role || !member.name)) {
-      msg.textContent = "Each board member needs both a role and a name.";
-      msg.className = "form-msg err";
-      return;
-    }
-
     const poster = {
       month: document.getElementById("posterMonthInput").value.trim(),
       theme: document.getElementById("posterThemeInput").value.trim(),
@@ -732,12 +705,6 @@
       return;
     }
 
-    const boardYear = document.getElementById("boardYearInput").value.trim();
-    if (!boardYear) {
-      msg.textContent = "Enter the school year for the board section.";
-      msg.className = "form-msg err";
-      return;
-    }
 
     const opportunities = [...document.querySelectorAll(".points-row")].map((row) => ({
       opportunity: row.querySelector(".points-opportunity").value.trim(),
@@ -793,8 +760,8 @@
       announcements,
       poster,
       points_tracker_url: pointsUrl,
-      board_year: boardYear,
-      board_members: boardMembers,
+      board_year: data.board_year || "",
+      board_members: Array.isArray(data.board_members) ? data.board_members : [],
       events_points: eventsPoints,
       updated_at: new Date().toISOString()
     });
