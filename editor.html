@@ -13,6 +13,7 @@
 .panel{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:22px;margin-bottom:18px}.panel h2,.panel h3{margin-top:0}.muted{color:var(--slate)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:grid;gap:6px;font-size:.76rem;font-family:var(--font-mono);color:var(--slate)}.field input,.field textarea,.field select{width:100%;box-sizing:border-box;padding:10px 11px;border:1px solid var(--line);border-radius:8px;font:inherit;color:var(--ink);background:#fff}.field textarea{min-height:100px;resize:vertical}.wide{grid-column:1/-1}
 .rows{display:grid;gap:10px;margin:14px 0}.row{border:1px solid var(--line);background:var(--pale);border-radius:10px;padding:13px}.row-grid{display:grid;grid-template-columns:1fr 1.2fr 1.7fr auto;gap:9px;align-items:end}.link-grid{display:grid;grid-template-columns:1.05fr 1.8fr 1.6fr auto;gap:9px;align-items:end}.meeting-row{display:grid;grid-template-columns:180px 1fr auto;gap:10px;align-items:end}.meeting-links{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}.check{display:flex;gap:7px;align-items:center;font-size:.82rem;color:var(--ink);font-family:var(--font-body);padding-bottom:10px}.check input{width:17px;height:17px}.actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:14px}.status{font-size:.84rem}.ok{color:#286043}.err{color:#8a2e2e}.hint{font-size:.8rem;color:var(--slate);margin:7px 0}.empty{padding:18px;text-align:center;color:var(--slate);border:1px dashed var(--line);border-radius:10px}
 .meeting-card{border:1px solid var(--line);border-radius:10px;padding:15px;margin-top:12px;background:#fff}.meeting-card-head{display:flex;justify-content:space-between;gap:12px}.pill{font:600 .7rem var(--font-mono);color:var(--slate)}
+.format-bar{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}.format-bar button{border:1px solid var(--line);background:#fff;color:var(--navy);border-radius:6px;padding:5px 9px;font:600 .78rem var(--font-body);cursor:pointer}.format-bar button:hover{background:var(--navy-pale)}.rich-editor{min-height:100px;padding:10px 11px;border:1px solid var(--line);border-radius:8px;font:inherit;color:var(--ink);background:#fff;line-height:1.5;outline:none}.rich-editor:focus{border-color:var(--teal);box-shadow:0 0 0 2px rgba(35,126,102,.12)}.rich-editor ul,.rich-editor ol{margin:.35em 0;padding-left:1.5em}.rich-editor a{color:var(--teal);text-decoration:underline}
 @media(max-width:760px){.grid,.row-grid,.link-grid,.meeting-row{grid-template-columns:1fr}.wide{grid-column:auto}.editor-head{display:block}}
 </style>
 </head>
@@ -65,6 +66,9 @@ let content={}; let meetings=[];
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const msg=(id,t,k='')=>{const e=document.getElementById(id);e.textContent=t;e.className='status '+k};
 const safeUrl=s=>{try{const u=new URL(String(s||'').trim());return u.protocol==='https:'?u.toString():''}catch{return''}};
+const sanitizeRich=html=>{const doc=new DOMParser().parseFromString(String(html??''),'text/html');const allowed=new Set(['B','STRONG','I','EM','U','UL','OL','LI','BR','A']);doc.body.querySelectorAll('*').forEach(el=>{if(!allowed.has(el.tagName)){el.replaceWith(...el.childNodes);return}for(const a of [...el.attributes]){if(el.tagName==='A'&&a.name==='href'){const u=safeUrl(a.value);if(u){el.setAttribute('href',u);el.setAttribute('target','_blank');el.setAttribute('rel','noopener')}else el.remove()}else el.removeAttribute(a.name)}});return doc.body.innerHTML};
+const richEditorHtml=s=>{const v=String(s??'');return /<\/?(b|strong|i|em|u|ul|ol|li|br|a)(\s|>)/i.test(v)?sanitizeRich(v):esc(v).replace(/\n/g,'<br>')};
+const initFormatters=()=>document.querySelectorAll('[data-format-bar]').forEach(bar=>bar.querySelectorAll('button').forEach(btn=>btn.onmousedown=e=>{e.preventDefault();document.execCommand(btn.dataset.command,false,null)}));
 function tab(name){document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));document.querySelectorAll('.tab').forEach(x=>x.hidden=x.id!=='tab-'+name)}
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>tab(b.dataset.tab));
 
@@ -103,7 +107,7 @@ function renderMeetings(){
     <label class="field">Title<input data-m="title" value="${esc(m.title)}" placeholder="September general meeting"></label>
     <button class="btn btn-outline delete-meeting" type="button">Delete</button>
    </div>
-   <label class="field" style="margin-top:10px">What we're doing<textarea data-m="description" placeholder="Short description of what members should expect.">${esc(m.description)}</textarea></label>
+   <div class="field" style="margin-top:10px"><span>What we're doing</span><div class="format-bar" data-format-bar><button type="button" data-command="bold"><strong>B</strong></button><button type="button" data-command="italic"><em>I</em></button><button type="button" data-command="underline"><u>U</u></button><button type="button" data-command="insertUnorderedList">• List</button><button type="button" data-command="insertOrderedList">1. List</button></div><div class="rich-editor" contenteditable="true" data-m="description" data-placeholder="Short description of what members should expect.">${richEditorHtml(m.description)}</div></div>
    <div class="meeting-links"><strong>Links</strong><p class="hint">Each link has its own Show on site switch. Blank or half-filled rows are okay.</p>
    <div class="rows">${m.links.map((l,li)=>`<div class="row"><div class="link-grid">
     <label class="field">Title<input data-l="title" data-mi="${mi}" data-li="${li}" value="${esc(l.title)}" placeholder="Meeting slides"></label>
@@ -115,13 +119,13 @@ function renderMeetings(){
   </div>`
  }).join('');
  document.querySelectorAll('.delete-meeting').forEach(b=>b.onclick=async e=>{const card=e.target.closest('.meeting-editor');const mi=+card.dataset.mi;const id=meetings[mi].id;if(id){const {error}=await sb.from('meeting_notes').delete().eq('id',id);if(error)return msg('meetingMsg','Delete failed: '+error.message,'err')}meetings.splice(mi,1);renderMeetings()});
- document.querySelectorAll('.save-meeting').forEach(b=>b.onclick=saveMeeting);
+ document.querySelectorAll('.save-meeting').forEach(b=>b.onclick=saveMeeting);initFormatters();
 }
 function readMeeting(card){
  const mi=+card.dataset.mi,m=meetings[mi];
  m.meeting_date=card.querySelector('[data-m="date"]').value||null;
  m.title=card.querySelector('[data-m="title"]').value;
- m.description=card.querySelector('[data-m="description"]').value;
+ m.description=sanitizeRich(card.querySelector('[data-m="description"]').innerHTML);
  card.querySelectorAll('[data-li]').forEach(el=>{const li=+el.dataset.li;const l=m.links[li];if(el.dataset.l==='visible')l.visible=el.checked;else l[el.dataset.l]=el.value});
 }
 async function saveMeeting(e){
