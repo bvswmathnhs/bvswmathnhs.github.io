@@ -50,6 +50,7 @@
   </section>
 
   <section id="tab-links" class="tab" hidden>
+    <div class="panel"><h3>Monthly poster</h3><p class="muted">Set the current submission link. This powers the button on the public Posters page.</p><label class="field">Submission link<input id="posterLink" type="url" placeholder="https://..."></label></div>
     <div class="panel">
       <h2>Important links</h2>
       <p class="muted">Five eye-catching spots for the things members actually need. Leave any slot empty or half-filled; incomplete slots simply stay hidden on the public site.</p>
@@ -138,11 +139,11 @@ async function saveMeeting(e){
 }
 async function load(){
  const [{data:c,error:ce},{data:ms,error:me}]=await Promise.all([
-  sb.from('site_content').select('board_year,board_members,important_links').eq('id',1).single(),
+  sb.from('site_content').select('board_year,board_members,important_links,poster').eq('id',1).single(),
   sb.from('meeting_notes').select('*').order('meeting_date',{ascending:false}).order('id',{ascending:false})
  ]);
  if(ce)throw ce;if(me)throw me;content=c||{};content.board_members=Array.isArray(content.board_members)?content.board_members:[];content.important_links=Array.isArray(content.important_links)?content.important_links:[];
- meetings=ms||[];renderBoard();renderLinks();renderMeetings();document.getElementById('editor').hidden=false;document.getElementById('gate').hidden=true;
+ meetings=ms||[];content.poster=content.poster&&typeof content.poster==='object'?content.poster:{};document.getElementById('posterLink').value=content.poster.link_url||'';renderBoard();renderLinks();renderMeetings();document.getElementById('editor').hidden=false;document.getElementById('gate').hidden=true;
 }
 async function openEditor(u){const {data:o}=await sb.from('officers').select('user_id').eq('user_id',u.id).maybeSingle();if(!o){await sb.auth.signOut();throw new Error('This account is not registered as a Math NHS officer.')}await load()}
 document.getElementById('gate').onsubmit=async e=>{e.preventDefault();msg('gateMsg','Signing in…');const {data,error}=await sb.auth.signInWithPassword({email:email.value.trim(),password:password.value});if(error||!data.user)return msg('gateMsg',error?.message||'Sign in failed','err');try{await openEditor(data.user)}catch(x){msg('gateMsg',x.message,'err')}};
@@ -155,7 +156,8 @@ document.getElementById('saveBoard').onclick=async()=>{
 };
 document.getElementById('saveLinks').onclick=async()=>{
  const arr=[...document.querySelectorAll('#linkRows .row')].map(row=>({title:row.querySelector('[data-l="title"]').value.trim(),url:row.querySelector('[data-l="url"]').value.trim(),description:row.querySelector('[data-l="description"]').value.trim()}));
- msg('linksMsg','Saving…');const {error}=await sb.from('site_content').update({important_links:arr,updated_at:new Date().toISOString()}).eq('id',1);if(error)return msg('linksMsg','Save failed: '+error.message,'err');content.important_links=arr;msg('linksMsg','Saved.','ok');
+ const poster={...(content.poster&&typeof content.poster==='object'?content.poster:{})};poster.link_url=document.getElementById('posterLink').value.trim();
+ msg('linksMsg','Saving…');const {error}=await sb.from('site_content').update({important_links:arr,poster,updated_at:new Date().toISOString()}).eq('id',1);if(error)return msg('linksMsg','Save failed: '+error.message,'err');content.important_links=arr;content.poster=poster;msg('linksMsg','Saved.','ok');
 };
 document.getElementById('newMeeting').onclick=()=>{meetings.unshift({id:null,meeting_date:'',title:'',description:'',links:Array.from({length:10},()=>({title:'',description:'',url:'',visible:false}))});renderMeetings();document.querySelector('#tab-meetings .meeting-editor')?.scrollIntoView({behavior:'smooth',block:'start'})};
 (async()=>{const {data}=await sb.auth.getUser();if(data?.user)try{await openEditor(data.user)}catch(x){msg('gateMsg',x.message,'err')}})();
