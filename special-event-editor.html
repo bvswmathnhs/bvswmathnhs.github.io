@@ -1,4 +1,184 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Special Event Editor — BVSW Math NHS</title><meta name="robots" content="noindex,nofollow"><link rel="icon" href="assets/math-nhs-logo.png"><link rel="stylesheet" href="assets/style.css"><style>html,body{height:100%;margin:0}.topbar{height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid var(--line);background:var(--white);box-sizing:border-box}.topbar a{text-decoration:none}iframe{display:block;width:100%;height:calc(100% - 58px);border:0;background:var(--pale)}</style></head><body><div class="topbar"><strong>Special event editor</strong><div><a class="btn btn-outline" href="quick-content.html">← Quick editor</a></div></div><iframe id="portalFrame" src="legacy-portal.html" title="Special event editor"></iframe><script>
-const frame=document.getElementById('portalFrame');function focusEventEditor(){try{const d=frame.contentDocument;if(!d)return;const tabs=d.querySelector('.portal-tabs');if(tabs)tabs.style.display='none';['portalPanelMeetings','portalPanelWork','portalPanelContent'].forEach(id=>{const e=d.getElementById(id);if(e)e.hidden=true});const upcoming=d.getElementById('portalPanelUpcoming');if(upcoming)upcoming.hidden=false;const admin=d.getElementById('adminView');if(admin&&admin.style.display!=='none'){const b=d.querySelector('[data-portal-tab="upcoming"]');if(b&&!upcoming?.dataset.quickOpened){b.click();if(upcoming)upcoming.dataset.quickOpened='1'}}}catch{}}
-frame.addEventListener('load',()=>{focusEventEditor();setInterval(focusEventEditor,500)});
-</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Special Event Editor — BVSW Math NHS</title><meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="assets/math-nhs-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.editor{max-width:900px;margin:auto;padding:42px 22px 90px}.editor-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-end;margin-bottom:26px}
+.content-editor-block{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin-top:18px}.content-editor-block h3{margin-top:0}
+.content-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.content-fields label{display:grid;gap:6px;font-family:var(--font-mono);font-size:.74rem;color:var(--slate)}
+.content-fields input,.content-fields textarea{width:100%;padding:10px 11px;border:1px solid var(--line);border-radius:var(--radius);font:inherit;color:var(--ink);background:#fff}
+.content-fields textarea{min-height:84px;resize:vertical}.field-wide{grid-column:1/-1}
+.repeat-editor-list{display:grid;gap:12px;margin:14px 0}
+.repeat-editor-row{display:grid;gap:10px;align-items:end;padding:14px;background:var(--pale);border-radius:var(--radius)}
+.repeat-editor-row.event-requirement-row{grid-template-columns:1fr auto}.repeat-editor-row.event-schedule-row-editor{grid-template-columns:1fr 2fr auto}
+.repeat-editor-row label{display:grid;gap:6px;font-family:var(--font-mono);font-size:.74rem;color:var(--slate)}
+.repeat-editor-row input{width:100%;padding:10px 11px;border:1px solid var(--line);border-radius:var(--radius);font:inherit}
+.portal-switches{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}
+.portal-switch{display:flex;align-items:flex-start;gap:10px;padding:13px 14px;border:1px solid var(--line);border-radius:var(--radius);background:var(--pale);text-align:left}
+.portal-switch input{width:18px;height:18px;margin-top:1px}.portal-switch strong{display:block;margin-bottom:2px}.portal-switch span{color:var(--slate);font-size:.82rem}
+.event-upload-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px}
+.form-msg{font-size:.85rem}.ok{color:#286043}.err{color:#8a2e2e}
+@media(max-width:760px){.content-fields,.repeat-editor-row,.portal-switches{grid-template-columns:1fr}.field-wide{grid-column:auto}.editor-head{display:block}}
+</style>
+</head>
+<body>
+<nav class="site-nav"><div class="wrap"><a class="brand" href="index.html"><img class="brand-logo" src="assets/math-nhs-logo.png" alt=""><span class="name">BVSW Math NHS</span></a><ul class="nav-links" style="position:static"><li><a href="portal-4q7z.html">Editor menu</a></li><li><a href="index.html">Back to site</a></li></ul></div></nav>
+
+<form id="gate" class="gate" style="margin-top:70px"><p class="eyebrow" style="justify-content:center">Officers only</p><h3 style="text-align:center">Sign in to the special event editor</h3><input id="email" type="email" placeholder="Officer email" autocomplete="username" style="width:100%;padding:12px;margin-bottom:8px"><input id="password" type="password" placeholder="Password" autocomplete="current-password" style="width:100%;padding:12px"><p id="gateMsg" class="msg"></p><button class="btn btn-navy" style="width:100%;justify-content:center">Sign in</button></form>
+
+<main id="editor" class="editor" hidden>
+  <div class="editor-head"><div><p class="eyebrow">Featured banner</p><h1>Special event</h1><p style="color:var(--slate)">Turn the master switch off to remove the tab, homepage link, and event page together.</p></div><button id="logout" class="btn btn-outline" type="button">Sign out</button></div>
+
+  <div class="content-editor-block">
+    <h3>Visibility</h3>
+    <label class="portal-switch"><input id="eventVisibleInput" type="checkbox"><span><strong>Show upcoming event</strong>Display the highlighted tab, homepage link, and public event page.</span></label>
+    <div class="portal-switches">
+      <label class="portal-switch"><input id="eventOverviewVisibleInput" type="checkbox"><span><strong>Overview</strong>Show the event description and contact note.</span></label>
+      <label class="portal-switch"><input id="eventRequirementsVisibleInput" type="checkbox"><span><strong>Requirements</strong>Show the member checklist.</span></label>
+      <label class="portal-switch"><input id="eventPosterVisibleInput" type="checkbox"><span><strong>Poster</strong>Show the optional event poster.</span></label>
+      <label class="portal-switch"><input id="eventScheduleVisibleInput" type="checkbox"><span><strong>Schedule</strong>Show the event-day timeline.</span></label>
+    </div>
+  </div>
+
+  <div class="content-editor-block">
+    <h3>Headline and links</h3>
+    <div class="content-fields">
+      <label>Top navigation label<input id="eventNavLabelInput" type="text" maxlength="40" placeholder="Upcoming Events"></label>
+      <label>Status badge<input id="eventStatusInput" type="text" maxlength="50" placeholder="Sign-ups open"></label>
+      <label>Small heading<input id="eventKickerInput" type="text" maxlength="60" placeholder="Featured event"></label>
+      <label>Event title<input id="eventTitleInput" type="text" maxlength="120" placeholder="STEM Fair"></label>
+      <label class="field-wide">Short introduction<textarea id="eventSummaryInput" maxlength="500" placeholder="The most important information members should see first."></textarea></label>
+      <label>Sign-up button text<input id="eventSignupLabelInput" type="text" maxlength="50" placeholder="Sign up"></label>
+      <label>Sign-up URL<input id="eventSignupUrlInput" type="url" placeholder="https://..."></label>
+    </div>
+  </div>
+
+  <div class="content-editor-block">
+    <h3>Quick details</h3>
+    <div class="content-fields">
+      <label>Date<input id="eventDateInput" type="text" maxlength="100" placeholder="September 26, 2026"></label>
+      <label>Time<input id="eventTimeInput" type="text" maxlength="100" placeholder="5:30–8:00 PM"></label>
+      <label>Location<input id="eventLocationInput" type="text" maxlength="140" placeholder="BVSW Commons"></label>
+      <label>Points<input id="eventPointsInput" type="text" maxlength="80" placeholder="8 points"></label>
+      <label class="field-wide">Full details<textarea id="eventDetailsInput" maxlength="1200" placeholder="What members need to know about the event."></textarea></label>
+      <label class="field-wide">Contact note<input id="eventContactInput" type="text" maxlength="240" placeholder="Questions? Reach out to a Math NHS officer."></label>
+    </div>
+  </div>
+
+  <div class="content-editor-block">
+    <h3>Photos</h3>
+    <p class="note">Upload a new image or paste an existing HTTPS URL. Clear a field to remove the image without leaving a caption or empty box.</p>
+    <div class="content-fields">
+      <label class="field-wide">Feature photo URL<input id="eventHeroUrlInput" type="text" placeholder="https://... or assets/events/..."></label>
+      <div class="field-wide event-upload-row"><input id="eventHeroUpload" type="file" accept="image/png,image/jpeg,image/webp,image/gif"><button class="btn btn-outline" id="clearEventHeroBtn" type="button">Remove feature photo</button></div>
+      <label class="field-wide">Poster image URL<input id="eventPosterUrlInput" type="text" placeholder="https://... or assets/events/..."></label>
+      <div class="field-wide event-upload-row"><input id="eventPosterUpload" type="file" accept="image/png,image/jpeg,image/webp,image/gif"><button class="btn btn-outline" id="clearEventPosterBtn" type="button">Remove poster</button></div>
+    </div>
+    <p class="form-msg" id="eventUploadMsg" role="status"></p>
+  </div>
+
+  <div class="content-editor-block"><h3>Requirements</h3><div class="repeat-editor-list" id="eventRequirementsEditor"></div><button class="btn btn-outline" type="button" id="addEventRequirementBtn">Add requirement</button></div>
+  <div class="content-editor-block"><h3>Schedule</h3><div class="repeat-editor-list" id="eventScheduleEditor"></div><button class="btn btn-outline" type="button" id="addEventScheduleBtn">Add schedule item</button></div>
+
+  <button class="btn btn-navy" type="button" id="saveUpcomingEventBtn" style="margin-top:20px">Save upcoming event</button>
+  <p class="form-msg" id="upcomingEventMsg" role="status"></p>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="assets/supabase-config.js"></script>
+<script>
+const sb=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);
+const msg=(id,t,k='')=>{const e=document.getElementById(id);e.textContent=t;e.className='msg '+k};
+const safeHttpsUrl=r=>{try{const u=new URL(r);return u.protocol==='https:'?u.toString():null}catch{return null}};
+const safeEventAssetUrl=raw=>{const v=String(raw||'').trim();if(!v)return'';if(/^assets\/[a-zA-Z0-9/_\-.]+$/.test(v))return v;return safeHttpsUrl(v)||''};
+
+const UPCOMING_DEFAULTS={visible:false,nav_label:"Upcoming Events",status:"Coming soon",kicker:"Featured event",title:"",summary:"",date:"",time:"",location:"",points:"",signup_label:"Sign up",signup_url:"",hero_url:"",poster_url:"",details:"",contact:"",requirements:[],schedule:[],sections:{overview:true,requirements:true,poster:false,schedule:false}};
+
+function makeRequirementRow(value=''){const row=document.createElement('div');row.className='repeat-editor-row event-requirement-row';const label=document.createElement('label');label.append('Requirement');const input=document.createElement('input');input.className='event-requirement-input';input.value=value;input.maxLength=240;input.placeholder='What members need to do';label.appendChild(input);const remove=document.createElement('button');remove.className='btn btn-outline remove-editor-row';remove.type='button';remove.textContent='Remove';row.append(label,remove);return row}
+function makeScheduleRow(item={}){const row=document.createElement('div');row.className='repeat-editor-row event-schedule-row-editor';[['Time','event-schedule-time-input',item.time||'','5:15 PM'],['Item','event-schedule-label-input',item.label||'','Volunteer check-in']].forEach(([text,className,value,placeholder])=>{const label=document.createElement('label');label.append(text);const input=document.createElement('input');input.className=className;input.value=value;input.maxLength=180;input.placeholder=placeholder;label.appendChild(input);row.appendChild(label)});const remove=document.createElement('button');remove.className='btn btn-outline remove-editor-row';remove.type='button';remove.textContent='Remove';row.appendChild(remove);return row}
+
+function renderUpcomingEditor(raw){
+ const value=raw&&typeof raw==='object'&&!Array.isArray(raw)?raw:{};
+ const ev={...UPCOMING_DEFAULTS,...value,sections:{...UPCOMING_DEFAULTS.sections,...(value.sections&&typeof value.sections==='object'?value.sections:{})},requirements:Array.isArray(value.requirements)?value.requirements:[],schedule:Array.isArray(value.schedule)?value.schedule:[]};
+ const fields={eventNavLabelInput:ev.nav_label,eventStatusInput:ev.status,eventKickerInput:ev.kicker,eventTitleInput:ev.title,eventSummaryInput:ev.summary,eventDateInput:ev.date,eventTimeInput:ev.time,eventLocationInput:ev.location,eventPointsInput:ev.points,eventSignupLabelInput:ev.signup_label,eventSignupUrlInput:ev.signup_url,eventHeroUrlInput:ev.hero_url,eventPosterUrlInput:ev.poster_url,eventDetailsInput:ev.details,eventContactInput:ev.contact};
+ Object.entries(fields).forEach(([id,v])=>{document.getElementById(id).value=v||''});
+ document.getElementById('eventVisibleInput').checked=ev.visible===true;
+ document.getElementById('eventOverviewVisibleInput').checked=ev.sections.overview===true;
+ document.getElementById('eventRequirementsVisibleInput').checked=ev.sections.requirements===true;
+ document.getElementById('eventPosterVisibleInput').checked=ev.sections.poster===true;
+ document.getElementById('eventScheduleVisibleInput').checked=ev.sections.schedule===true;
+ const requirements=document.getElementById('eventRequirementsEditor');requirements.replaceChildren();ev.requirements.forEach(item=>requirements.appendChild(makeRequirementRow(String(item||''))));
+ const schedule=document.getElementById('eventScheduleEditor');schedule.replaceChildren();ev.schedule.forEach(item=>schedule.appendChild(makeScheduleRow(item)));
+}
+
+async function loadUpcomingEvent(){
+ msg('upcomingEventMsg','Loading current event…');
+ const {data,error}=await sb.from('site_content').select('upcoming_event').eq('id',1).maybeSingle();
+ if(error||!data){msg('upcomingEventMsg','Could not load event: '+(error?.message||'No content row found'),'err');return}
+ renderUpcomingEditor(data.upcoming_event);msg('upcomingEventMsg','');
+}
+
+document.getElementById('addEventRequirementBtn').onclick=()=>document.getElementById('eventRequirementsEditor').appendChild(makeRequirementRow());
+document.getElementById('addEventScheduleBtn').onclick=()=>document.getElementById('eventScheduleEditor').appendChild(makeScheduleRow());
+document.getElementById('clearEventHeroBtn').onclick=()=>{document.getElementById('eventHeroUrlInput').value='';document.getElementById('eventHeroUpload').value=''};
+document.getElementById('clearEventPosterBtn').onclick=()=>{document.getElementById('eventPosterUrlInput').value='';document.getElementById('eventPosterUpload').value=''};
+document.querySelectorAll('.repeat-editor-list').forEach(list=>list.addEventListener('click',e=>{const r=e.target.closest('.remove-editor-row');if(r)r.closest('.repeat-editor-row').remove()}));
+
+async function uploadEventImage(fileInput,urlInput){
+ const file=fileInput.files[0];if(!file)return;
+ const allowed={"image/png":"png","image/jpeg":"jpg","image/webp":"webp","image/gif":"gif"};const ext=allowed[file.type];
+ if(!ext||file.size>5*1024*1024){msg('eventUploadMsg','Use a PNG, JPG, WebP, or GIF no larger than 5 MB.','err');fileInput.value='';return}
+ fileInput.disabled=true;msg('eventUploadMsg','Uploading image…');
+ const path=`upcoming/${Date.now()}-${crypto.randomUUID()}.${ext}`;
+ const {error:upErr}=await sb.storage.from('site-assets').upload(path,file,{cacheControl:'3600',contentType:file.type,upsert:false});
+ if(upErr){msg('eventUploadMsg','Upload failed: '+upErr.message,'err');fileInput.disabled=false;fileInput.value='';return}
+ const {data}=sb.storage.from('site-assets').getPublicUrl(path);const url=safeHttpsUrl(data?.publicUrl);
+ if(!url)msg('eventUploadMsg','The image uploaded, but its public URL was invalid.','err');
+ else{urlInput.value=url;msg('eventUploadMsg','Image uploaded. Save the event to publish it.','ok')}
+ fileInput.disabled=false;fileInput.value='';
+}
+document.getElementById('eventHeroUpload').addEventListener('change',e=>uploadEventImage(e.currentTarget,document.getElementById('eventHeroUrlInput')));
+document.getElementById('eventPosterUpload').addEventListener('change',e=>uploadEventImage(e.currentTarget,document.getElementById('eventPosterUrlInput')));
+
+document.getElementById('saveUpcomingEventBtn').onclick=async()=>{
+ const signupRaw=document.getElementById('eventSignupUrlInput').value.trim();const signupUrl=signupRaw?safeHttpsUrl(signupRaw):'';
+ if(signupRaw&&!signupUrl)return msg('upcomingEventMsg','The sign-up link must start with https://.','err');
+ const heroRaw=document.getElementById('eventHeroUrlInput').value.trim(),posterRaw=document.getElementById('eventPosterUrlInput').value.trim();
+ const heroUrl=safeEventAssetUrl(heroRaw),posterUrl=safeEventAssetUrl(posterRaw);
+ if((heroRaw&&!heroUrl)||(posterRaw&&!posterUrl))return msg('upcomingEventMsg','Image links must be HTTPS URLs or existing assets/events/ paths.','err');
+ const upcomingEvent={
+  visible:document.getElementById('eventVisibleInput').checked,
+  nav_label:document.getElementById('eventNavLabelInput').value.trim().slice(0,40)||"Upcoming Events",
+  status:document.getElementById('eventStatusInput').value.trim(),
+  kicker:document.getElementById('eventKickerInput').value.trim(),
+  title:document.getElementById('eventTitleInput').value.trim(),
+  summary:document.getElementById('eventSummaryInput').value.trim(),
+  date:document.getElementById('eventDateInput').value.trim(),
+  time:document.getElementById('eventTimeInput').value.trim(),
+  location:document.getElementById('eventLocationInput').value.trim(),
+  points:document.getElementById('eventPointsInput').value.trim(),
+  signup_label:document.getElementById('eventSignupLabelInput').value.trim()||"Sign up",
+  signup_url:signupUrl,hero_url:heroUrl,poster_url:posterUrl,
+  details:document.getElementById('eventDetailsInput').value.trim(),
+  contact:document.getElementById('eventContactInput').value.trim(),
+  requirements:[...document.querySelectorAll('.event-requirement-input')].map(i=>i.value.trim()).filter(Boolean),
+  schedule:[...document.querySelectorAll('.event-schedule-row-editor')].map(row=>({time:row.querySelector('.event-schedule-time-input').value.trim(),label:row.querySelector('.event-schedule-label-input').value.trim()})).filter(item=>item.time||item.label),
+  sections:{overview:document.getElementById('eventOverviewVisibleInput').checked,requirements:document.getElementById('eventRequirementsVisibleInput').checked,poster:document.getElementById('eventPosterVisibleInput').checked,schedule:document.getElementById('eventScheduleVisibleInput').checked}
+ };
+ if(upcomingEvent.visible&&(!upcomingEvent.title||!upcomingEvent.summary))return msg('upcomingEventMsg','A visible event needs a title and short introduction.','err');
+ msg('upcomingEventMsg','Saving…');
+ const {error}=await sb.from('site_content').update({upcoming_event:upcomingEvent,updated_at:new Date().toISOString()}).eq('id',1);
+ if(error)return msg('upcomingEventMsg','Save failed: '+error.message,'err');
+ msg('upcomingEventMsg',upcomingEvent.visible?'Saved. The upcoming event is live.':'Saved. The upcoming event is hidden everywhere.','ok');
+};
+
+async function openEditor(u){const {data:o}=await sb.from('officers').select('user_id').eq('user_id',u.id).maybeSingle();if(!o){await sb.auth.signOut();throw new Error('This account is not registered as a Math NHS officer.')}await loadUpcomingEvent();document.getElementById('editor').hidden=false;document.getElementById('gate').hidden=true}
+document.getElementById('gate').onsubmit=async e=>{e.preventDefault();msg('gateMsg','Signing in…');const {data,error}=await sb.auth.signInWithPassword({email:email.value.trim(),password:password.value});if(error||!data.user)return msg('gateMsg',error?.message||'Sign in failed','err');try{await openEditor(data.user)}catch(x){msg('gateMsg',x.message,'err')}};
+document.getElementById('logout').onclick=async()=>{await sb.auth.signOut();location.reload()};
+(async()=>{const {data}=await sb.auth.getUser();if(data?.user)try{await openEditor(data.user)}catch(x){msg('gateMsg',x.message,'err')}})();
+</script>
+</body></html>
