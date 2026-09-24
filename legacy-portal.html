@@ -366,12 +366,12 @@
     if (meetingErr) console.error("Could not load meeting access:", meetingErr);
     if (data && data.kind === "qr" && data.value) {
       showQrPreview(data.value);
-      setmeeting check-inMode("qr");
+      setMeetingCheckInMode("qr");
     } else if (data && data.kind === "link" && data.value) {
       document.getElementById("linkInput").value = data.value;
-      setmeeting check-inMode("link");
+      setMeetingCheckInMode("link");
     } else {
-      setmeeting check-inMode("qr");
+      setMeetingCheckInMode("qr");
     }
     const { data: slides, error: slidesLoadErr } = await sb.from("current_slides").select("*").eq("id", 1).maybeSingle();
     if (slidesLoadErr) console.error("Could not load slides:", slidesLoadErr);
@@ -380,7 +380,7 @@
     }
   }
 
-  function setmeeting check-inMode(mode) {
+  function setMeetingCheckInMode(mode) {
     const isQr = mode === "qr";
     document.getElementById("qrMode").style.display = isQr ? "block" : "none";
     document.getElementById("linkMode").style.display = isQr ? "none" : "block";
@@ -390,8 +390,8 @@
     document.getElementById("modeLink").setAttribute("aria-pressed", String(!isQr));
   }
 
-  document.getElementById("modeQR").addEventListener("click", () => setmeeting check-inMode("qr"));
-  document.getElementById("modeLink").addEventListener("click", () => setmeeting check-inMode("link"));
+  document.getElementById("modeQR").addEventListener("click", () => setMeetingCheckInMode("qr"));
+  document.getElementById("modeLink").addEventListener("click", () => setMeetingCheckInMode("link"));
 
   function safeHttpsUrl(rawUrl) {
     try {
