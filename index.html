@@ -176,6 +176,6 @@
 <script src="assets/site-content.js"></script>
 <script src="assets/quick-content.js"></script>
 <script src="assets/app.js"></script>
-<script>Promise.resolve(window.siteContentReady).finally(()=>document.body.classList.remove("home-data-loading"));</script>
+<script>Promise.all([window.siteContentReady,window.quickContentReady]).finally(()=>document.body.classList.remove("home-data-loading"));</script>
 </body>
 </html>
