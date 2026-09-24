@@ -9,8 +9,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/style.css">
+<style>body.home-data-loading{visibility:hidden}</style>
 </head>
-<body>
+<body class="home-data-loading">
 
 <nav class="site-nav">
   <div class="wrap">
@@ -148,19 +149,6 @@
   </div>
 </section>
 
-<section class="bg-pale">
-  <div class="wrap">
-    <div class="teaser">
-      <div>
-        <p class="eyebrow">Curious?</p>
-        <h3>Wanna see what we're actually about?</h3>
-        <p>Meet the community, see what membership looks like, and catch photos from our events.</p>
-      </div>
-      <a class="btn btn-navy" href="about.html">About Us &rarr;</a>
-    </div>
-  </div>
-</section>
-
 <footer id="contact">
   <div class="wrap">
     <div class="footer-grid">
@@ -188,5 +176,6 @@
 <script src="assets/site-content.js"></script>
 <script src="assets/quick-content.js"></script>
 <script src="assets/app.js"></script>
+<script>Promise.resolve(window.siteContentReady).finally(()=>document.body.classList.remove("home-data-loading"));</script>
 </body>
 </html>
