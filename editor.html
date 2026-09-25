@@ -14,6 +14,7 @@
 .rows{display:grid;gap:10px;margin:14px 0}.row{border:1px solid var(--line);background:var(--pale);border-radius:10px;padding:13px}.row-grid{display:grid;grid-template-columns:1fr 1.2fr 1.7fr auto;gap:9px;align-items:end}.link-grid{display:grid;grid-template-columns:1.05fr 1.8fr 1.6fr auto;gap:9px;align-items:end}.meeting-row{display:grid;grid-template-columns:180px 1fr auto;gap:10px;align-items:end}.meeting-links{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}.check{display:flex;gap:7px;align-items:center;font-size:.82rem;color:var(--ink);font-family:var(--font-body);padding-bottom:10px}.check input{width:17px;height:17px}.actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:14px}.status{font-size:.84rem}.ok{color:#286043}.err{color:#8a2e2e}.hint{font-size:.8rem;color:var(--slate);margin:7px 0}.empty{padding:18px;text-align:center;color:var(--slate);border:1px dashed var(--line);border-radius:10px}
 .meeting-card{border:1px solid var(--line);border-radius:10px;padding:15px;margin-top:12px;background:#fff}.meeting-card-head{display:flex;justify-content:space-between;gap:12px}.pill{font:600 .7rem var(--font-mono);color:var(--slate)}
 .format-bar{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}.format-bar button{border:1px solid var(--line);background:#fff;color:var(--navy);border-radius:6px;padding:5px 9px;font:600 .78rem var(--font-body);cursor:pointer}.format-bar button:hover{background:var(--navy-pale)}.rich-editor{min-height:100px;padding:10px 11px;border:1px solid var(--line);border-radius:8px;font:inherit;color:var(--ink);background:#fff;line-height:1.5;outline:none}.rich-editor:focus{border-color:var(--teal);box-shadow:0 0 0 2px rgba(35,126,102,.12)}.rich-editor ul,.rich-editor ol{margin:.35em 0;padding-left:1.5em}.rich-editor a{color:var(--teal);text-decoration:underline}
+.msg-card{border:1px solid var(--line);border-radius:10px;padding:14px;margin-top:10px;background:#fff}.msg-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.msg-status{font:600 .68rem var(--font-mono);text-transform:uppercase;color:var(--slate)}.msg-status.new{color:#8a2e2e}.msg-body{margin:8px 0}.msg-source{font-size:.78rem;color:var(--slate)}
 @media(max-width:760px){.grid,.row-grid,.link-grid,.meeting-row{grid-template-columns:1fr}.wide{grid-column:auto}.editor-head{display:block}}
 </style>
 </head>
@@ -28,6 +29,7 @@
     <button class="active" data-tab="meetings">Meeting notes</button>
     <button data-tab="board">Board members</button>
     <button data-tab="links">Important links</button>
+    <button data-tab="inbox">Board inbox</button>
   </div>
 
   <section id="tab-meetings" class="tab">
@@ -56,6 +58,16 @@
       <p class="muted">Five eye-catching spots for the things members actually need. Leave any slot empty or half-filled; incomplete slots simply stay hidden on the public site.</p>
       <div id="linkRows" class="rows"></div>
       <div class="actions"><button id="saveLinks" class="btn btn-navy" type="button">Save links</button><span id="linksMsg" class="status"></span></div>
+    </div>
+  </section>
+
+  <section id="tab-inbox" class="tab" hidden>
+    <div class="panel">
+      <h2>Board inbox</h2>
+      <p class="muted">Messages submitted through the site's contact form appear here.</p>
+      <div class="actions"><button id="showNewMessages" class="btn btn-navy" type="button">New</button><button id="showAllMessages" class="btn btn-outline" type="button">All</button><button id="refreshMessages" class="btn btn-outline" type="button">Refresh</button></div>
+      <p id="inboxMsg" class="status"></p>
+      <div id="inboxList"></div>
     </div>
   </section>
 </main>
@@ -137,13 +149,41 @@ async function saveMeeting(e){
  if(res.error){status.textContent='Save failed: '+res.error.message;status.className='status err';return}
  meetings[mi]=res.data;status.textContent='Saved.';status.className='status ok';
 }
+
+let inboxFilter='new';
+function chicagoDisplay(value){if(!value)return'Not provided';return new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',weekday:'short',month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}).format(new Date(value))}
+async function loadInbox(){
+ const list=document.getElementById('inboxList'),status=document.getElementById('inboxMsg');
+ list.innerHTML='<div class="empty">Loading messages…</div>';status.textContent='';
+ let q=sb.from('contact_messages').select('id,name,email,message,page_path,status,created_at,read_at').order('created_at',{ascending:false});
+ if(inboxFilter==='new')q=q.eq('status','new');
+ const {data,error}=await q;
+ if(error){list.innerHTML='';status.textContent='Could not load messages: '+error.message;status.className='status err';return}
+ if(!data?.length){list.innerHTML=`<div class="empty">No ${inboxFilter==='new'?'new ':''}messages right now.</div>`;return}
+ list.innerHTML=data.map(row=>`<div class="msg-card" data-id="${row.id}">
+  <div class="msg-top"><div><span class="msg-status ${esc(row.status)}">${esc(row.status)}</span><h3 style="margin:4px 0">${esc(row.name)}</h3><a href="mailto:${encodeURIComponent(row.email||'')}">${esc(row.email||'No email')}</a></div><span class="hint">${esc(chicagoDisplay(row.created_at))}</span></div>
+  <p class="msg-body">${esc(row.message)}</p>
+  <p class="msg-source">Sent from ${esc(row.page_path||'the website')}</p>
+  ${row.status==='new'?'<button class="btn btn-outline mark-read" type="button">Mark as read</button>':''}
+ </div>`).join('');
+}
+document.getElementById('inboxList').addEventListener('click',async e=>{
+ const btn=e.target.closest('.mark-read');if(!btn)return;const card=e.target.closest('.msg-card');btn.disabled=true;
+ const {error}=await sb.from('contact_messages').update({status:'read',read_at:new Date().toISOString()}).eq('id',Number(card.dataset.id));
+ if(error){btn.disabled=false;return}
+ loadInbox();
+});
+document.getElementById('showNewMessages').onclick=()=>{inboxFilter='new';document.getElementById('showNewMessages').className='btn btn-navy';document.getElementById('showAllMessages').className='btn btn-outline';loadInbox()};
+document.getElementById('showAllMessages').onclick=()=>{inboxFilter='all';document.getElementById('showNewMessages').className='btn btn-outline';document.getElementById('showAllMessages').className='btn btn-navy';loadInbox()};
+document.getElementById('refreshMessages').onclick=loadInbox;
+
 async function load(){
  const [{data:c,error:ce},{data:ms,error:me}]=await Promise.all([
   sb.from('site_content').select('board_year,board_members,important_links,poster').eq('id',1).single(),
   sb.from('meeting_notes').select('*').order('meeting_date',{ascending:false}).order('id',{ascending:false})
  ]);
  if(ce)throw ce;if(me)throw me;content=c||{};content.board_members=Array.isArray(content.board_members)?content.board_members:[];content.important_links=Array.isArray(content.important_links)?content.important_links:[];
- meetings=ms||[];content.poster=content.poster&&typeof content.poster==='object'?content.poster:{};document.getElementById('posterLink').value=content.poster.link_url||'';renderBoard();renderLinks();renderMeetings();document.getElementById('editor').hidden=false;document.getElementById('gate').hidden=true;
+ meetings=ms||[];content.poster=content.poster&&typeof content.poster==='object'?content.poster:{};document.getElementById('posterLink').value=content.poster.link_url||'';renderBoard();renderLinks();renderMeetings();loadInbox();document.getElementById('editor').hidden=false;document.getElementById('gate').hidden=true;
 }
 async function openEditor(u){const {data:o}=await sb.from('officers').select('user_id').eq('user_id',u.id).maybeSingle();if(!o){await sb.auth.signOut();throw new Error('This account is not registered as a Math NHS officer.')}await load()}
 document.getElementById('gate').onsubmit=async e=>{e.preventDefault();msg('gateMsg','Signing in…');const {data,error}=await sb.auth.signInWithPassword({email:email.value.trim(),password:password.value});if(error||!data.user)return msg('gateMsg',error?.message||'Sign in failed','err');try{await openEditor(data.user)}catch(x){msg('gateMsg',x.message,'err')}};
