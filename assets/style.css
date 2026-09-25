@@ -26,7 +26,7 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overscroll-behavior-y: none; }
 
 body {
   margin: 0;
@@ -35,6 +35,7 @@ body {
   background: var(--cream);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
 }
 
 img { max-width: 100%; display: block; }
