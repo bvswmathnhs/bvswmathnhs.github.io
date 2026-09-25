@@ -22,7 +22,7 @@
 .portal-switch{display:flex;align-items:flex-start;gap:10px;padding:13px 14px;border:1px solid var(--line);border-radius:var(--radius);background:var(--pale);text-align:left}
 .portal-switch input{width:18px;height:18px;margin-top:1px}.portal-switch strong{display:block;margin-bottom:2px}.portal-switch span{color:var(--slate);font-size:.82rem}
 .event-upload-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px}
-.form-msg{font-size:.85rem}.ok{color:#286043}.err{color:#8a2e2e}
+.msg{font-size:.85rem}.ok{color:#286043}.err{color:#8a2e2e}
 @media(max-width:760px){.content-fields,.repeat-editor-row,.portal-switches{grid-template-columns:1fr}.field-wide{grid-column:auto}.editor-head{display:block}}
 </style>
 </head>
@@ -79,14 +79,14 @@
       <label class="field-wide">Poster image URL<input id="eventPosterUrlInput" type="text" placeholder="https://... or assets/events/..."></label>
       <div class="field-wide event-upload-row"><input id="eventPosterUpload" type="file" accept="image/png,image/jpeg,image/webp,image/gif"><button class="btn btn-outline" id="clearEventPosterBtn" type="button">Remove poster</button></div>
     </div>
-    <p class="form-msg" id="eventUploadMsg" role="status"></p>
+    <p class="msg" id="eventUploadMsg" role="status"></p>
   </div>
 
   <div class="content-editor-block"><h3>Requirements</h3><div class="repeat-editor-list" id="eventRequirementsEditor"></div><button class="btn btn-outline" type="button" id="addEventRequirementBtn">Add requirement</button></div>
   <div class="content-editor-block"><h3>Schedule</h3><div class="repeat-editor-list" id="eventScheduleEditor"></div><button class="btn btn-outline" type="button" id="addEventScheduleBtn">Add schedule item</button></div>
 
   <button class="btn btn-navy" type="button" id="saveUpcomingEventBtn" style="margin-top:20px">Save upcoming event</button>
-  <p class="form-msg" id="upcomingEventMsg" role="status"></p>
+  <p class="msg" id="upcomingEventMsg" role="status"></p>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="assets/supabase-config.js"></script>
