@@ -102,7 +102,7 @@ savePoints.onclick=async()=>{
 saveEventCards.onclick=async()=>{
  const cards=[...document.querySelectorAll('.row-event')].map(r=>({kicker:r.querySelector('.e-kicker').value.trim(),title:r.querySelector('.e-title').value.trim(),description:r.querySelector('.e-desc').value.trim(),images:r.querySelector('.e-images').value.split(/\r?\n/).map(v=>v.trim()).filter(Boolean),link_label:r.querySelector('.e-link-label').value.trim(),link_url:r.querySelector('.e-link-url').value.trim()})).filter(i=>i.kicker||i.title||i.description||i.images.length||i.link_label||i.link_url);
  if(cards.some(i=>!i.title||!i.description||(Boolean(i.link_label)!==Boolean(i.link_url))))return m('eventCardMsg','Each card needs a title and description; optional links need both text and a URL.','err');
- if(cards.some(i=>i.images.some(url=>!safeAssetOrHttps(url))||(i.link_url&&!/^(?:https:\/\/|[a-zA-Z0-9_-]+\.html(?:[#?].*)?)$/.test(i.link_url))))return m('eventCardMsg','Images must be HTTPS URLs or assets/ paths. Links must be HTTPS or a local .html page.','err');
+ if(cards.some(i=>i.images.some(url=>!safeAssetOrHttps(url))||(i.link_url&&!/^(?:https:\/\/.+|[a-zA-Z0-9_-]+\.html(?:[#?].*)?)$/.test(i.link_url))))return m('eventCardMsg','Images must be HTTPS URLs or assets/ paths. Links must be HTTPS or a local .html page.','err');
  const eyebrow=eventsEyebrow.value.trim(),title=eventsTitle.value.trim(),intro=eventsIntro.value.trim();
  if(!eyebrow||!title||!intro)return m('eventCardMsg','Fill in the section label, heading, and introduction.','err');
  const ep={...(content.events_points||{}),events_eyebrow:eyebrow,events_title:title,events_intro:intro,events:cards};
