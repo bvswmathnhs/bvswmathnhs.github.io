@@ -1,13 +1,14 @@
 // Minimal drop-in for the few supabase-js calls the public pages use (select().eq().maybeSingle() and insert()).
 // Uses plain fetch against the REST API, so no CDN script is needed. Skipped if the real library is already loaded.
+// If the live site_content request fails or is blocked (e.g. school web filters), it falls back to the
+// same-origin snapshot assets/site-data.json.
 (function () {
   if (window.supabase) return;
-  var TIMEOUT_MS = 6000;
   var cache = {};
 
-  function request(path, options) {
+  function request(path, options, timeoutMs) {
     var ctrl = new AbortController();
-    var timer = setTimeout(function () { ctrl.abort(); }, TIMEOUT_MS);
+    var timer = setTimeout(function () { ctrl.abort(); }, timeoutMs);
     var headers = Object.assign({
       apikey: window.SUPABASE_ANON_KEY,
       Authorization: 'Bearer ' + window.SUPABASE_ANON_KEY
@@ -18,6 +19,15 @@
       body: options.body,
       signal: ctrl.signal
     }).finally(function () { clearTimeout(timer); });
+  }
+
+  function snapshot() {
+    return fetch(new URL('assets/site-data.json', document.baseURI).href, { cache: 'no-cache' })
+      .then(function (res) {
+        if (!res.ok) throw new Error('snapshot HTTP ' + res.status);
+        return res.json();
+      })
+      .then(function (row) { return [row]; });
   }
 
   function pick(row, cols) {
@@ -41,12 +51,16 @@
               return encodeURIComponent(k) + '=eq.' + encodeURIComponent(filters[k]);
             }).join('&');
             var key = table + '?' + qs;
-            // One network request per table/filter, shared by every caller on the page.
+            // One data load per table/filter, shared by every caller on the page.
             if (!cache[key]) {
-              cache[key] = request(table + '?select=*&' + qs + '&limit=1', {})
+              cache[key] = request(table + '?select=*&' + qs + '&limit=1', {}, 3000)
                 .then(function (res) {
                   if (!res.ok) throw new Error('HTTP ' + res.status);
                   return res.json();
+                })
+                .catch(function (err) {
+                  if (table === 'site_content') return snapshot();
+                  throw err;
                 });
             }
             return cache[key].then(
@@ -62,7 +76,7 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Prefer: 'return=minimal' },
           body: JSON.stringify(row)
-        }).then(function (res) {
+        }, 10000).then(function (res) {
           if (res.ok) return { error: null };
           return res.text().then(function (t) { return { error: { message: t || ('HTTP ' + res.status) } }; });
         }, function (err) {
