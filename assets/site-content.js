@@ -3,6 +3,42 @@
     ? new Promise((resolve) => document.addEventListener("DOMContentLoaded", resolve, { once: true }))
     : Promise.resolve();
 
+  // Reads site_content without needing the supabase-js CDN script. If the live request fails or is blocked
+  // (e.g. school web filters), falls back to the same-origin snapshot assets/site-data.json.
+  // Pages that load assets/supabase-lite.js share its single request instead.
+  async function liteRead() {
+    let row = null;
+    try {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 3000);
+      try {
+        const res = await fetch(`${window.SUPABASE_URL}/rest/v1/site_content?select=*&id=eq.1&limit=1`, {
+          headers: { apikey: window.SUPABASE_ANON_KEY, Authorization: `Bearer ${window.SUPABASE_ANON_KEY}` },
+          signal: ctrl.signal
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const rows = await res.json();
+        row = rows && rows[0] ? rows[0] : null;
+      } finally {
+        clearTimeout(timer);
+      }
+    } catch (liveError) {
+      try {
+        const res = await fetch(new URL("assets/site-data.json", document.baseURI).href, { cache: "no-cache" });
+        if (!res.ok) throw new Error(`snapshot HTTP ${res.status}`);
+        row = await res.json();
+      } catch (snapshotError) {
+        return { data: null, error: { message: String(snapshotError && snapshotError.message || snapshotError) } };
+      }
+    }
+    return { data: row, error: null };
+  }
+
+  function siteContentClient() {
+    if (window.supabase && window.supabase.__lite) return window.supabase.createClient();
+    return { from: () => ({ select: () => ({ eq: () => ({ maybeSingle: liteRead }) }) }) };
+  }
+
   const EVENT_DEFAULTS = {
     visible: false,
     nav_label: "Upcoming Events",
@@ -280,11 +316,11 @@
 
   window.siteContentReady = (async () => {
     await readyForDom;
-    if (!window.supabase || !window.SUPABASE_URL || !window.SUPABASE_ANON_KEY) {
+    if (!window.SUPABASE_URL || !window.SUPABASE_ANON_KEY) {
       renderUpcomingEvent(EVENT_DEFAULTS);
       return;
     }
-    const client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+    const client = siteContentClient();
     const { data, error } = await client.from("site_content").select("*").eq("id", 1).maybeSingle();
     if (error || !data) {
       if (error) console.warn("Using built-in site content:", error.message);

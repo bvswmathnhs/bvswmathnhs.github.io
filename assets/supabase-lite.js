@@ -86,5 +86,5 @@
     };
   }
 
-  window.supabase = { createClient: function () { return { from: from }; } };
+  window.supabase = { __lite: true, createClient: function () { return { from: from }; } };
 })();
