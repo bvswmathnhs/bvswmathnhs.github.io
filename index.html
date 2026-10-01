@@ -7,7 +7,8 @@
 <link rel="icon" type="image/png" href="assets/math-nhs-logo.png">
 <meta name="description" content="Blue Valley Southwest Math National Honor Society — meetings, events, points opportunities, and more.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
 <link rel="stylesheet" href="assets/style.css">
 <style>body.home-data-loading{visibility:hidden}</style>
 </head>
@@ -77,7 +78,14 @@
 
 <div class="ruler"></div>
 
-<section class="bg-white"><div class="wrap"><div class="section-head"><p class="eyebrow">Quick access</p><h2>Important links</h2><p>The things members use most, all in one place.</p></div><div class="grid grid-3" id="importantLinks"></div></div></section>
+<section class="bg-white"><div class="wrap"><div class="section-head"><p class="eyebrow">Quick access</p><h2>Important links</h2><p>The things members use most, all in one place.</p></div><div class="grid grid-3" id="importantLinks">
+<!-- Static fallback: shown if the live data can't load (e.g. blocked on school networks). Replaced automatically by the live list. -->
+<a class="card" href="https://www.signupgenius.com/go/10C0E49ABAC2AA4FEC61-66078151-mathletics#/" target="_blank" rel="noopener" style="text-decoration:none;display:block;"><h3>Mathletics Volunteer Sign Up</h3><p>Volunteers will help grade paper scores during the Liberty View Mathletics competition. The competition includes elementary students from Liberty View and Morse who are from 3rd to 5th grade.</p></a>
+<a class="card" href="https://docs.google.com/forms/d/e/1FAIpQLSc1DMLmggb8KAN-jfnRlZaaa9_NRUxFoag09IJsIGYXcPbZvw/viewform" target="_blank" rel="noopener" style="text-decoration:none;display:block;"><h3>STEM Career Talks Vote</h3><p>Pick up to 3 types of STEM careers that you would like to hear from during a Math NHS Meeting!</p></a>
+<a class="card" href="https://forms.gle/rpqAA3xkngjyejdW8" target="_blank" rel="noopener" style="text-decoration:none;display:block;"><h3>T-Shirt Design Submission 26-27</h3><p>Requirements in Google Form</p></a>
+<a class="card" href="https://bvk12.schoolcashonline.com/Fee/Details/8560/573/False/True" target="_blank" rel="noopener" style="text-decoration:none;display:block;"><h3>Club Dues</h3><p>Pay your Math NHS required club dues by October 9th!</p></a>
+<a class="card" href="https://docs.google.com/forms/d/e/1FAIpQLScflNFj45Z8GxKia2yVphw944GQa-3uiyezBQm7x9AzTdzOHA/viewform?usp=dialog" target="_blank" rel="noopener" style="text-decoration:none;display:block;"><h3>Meeting Game Sign-Up</h3><p>Lead a fun math game at our next meeting with a group of up to 4 people!</p></a>
+</div></div></section>
 
 <section class="bg-white">
   <div class="wrap">
@@ -164,11 +172,16 @@
   </div>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/supabase-config.js"></script>
+<script src="assets/supabase-lite.js"></script>
 <script src="assets/site-content.js"></script>
 <script src="assets/quick-content.js?v=2"></script>
 <script src="assets/app.js"></script>
-<script>Promise.all([window.siteContentReady,window.quickContentReady]).finally(()=>document.body.classList.remove("home-data-loading"));</script>
+<script>
+// Never keep the page hidden more than 1.5s waiting on data; static content is already in the HTML.
+var reveal=function(){document.body.classList.remove("home-data-loading")};
+setTimeout(reveal,1500);
+Promise.all([window.siteContentReady,window.quickContentReady]).then(reveal,reveal);
+</script>
 </body>
 </html>
