@@ -1,6 +1,7 @@
 name: Sync site data
 
 # Keeps assets/site-data.json (same-origin fallback for networks that block supabase.co) in sync with the database.
+# Also makes a tiny keep-alive commit if the repo has been quiet for 40+ days, so GitHub never pauses the schedule.
 on:
   schedule:
     - cron: "*/10 * * * *"
@@ -20,13 +21,16 @@ jobs:
           curl -fsS "https://rydpwtehxjgmshpaxlbj.supabase.co/rest/v1/site_content?select=*&id=eq.1&limit=1" \
             -H "apikey: $KEY" -H "Authorization: Bearer $KEY" | jq '.[0]' > /tmp/site-data.json
           test "$(jq -r .id /tmp/site-data.json)" = "1"
-      - name: Commit if changed
+      - name: Commit if changed, or keep the schedule alive
         run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if ! cmp -s /tmp/site-data.json assets/site-data.json; then
             cp /tmp/site-data.json assets/site-data.json
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add assets/site-data.json
             git commit -m "Sync site data from Supabase"
+            git push
+          elif [ $(( $(date +%s) - $(git log -1 --format=%ct) )) -gt 3456000 ]; then
+            git commit --allow-empty -m "Keep scheduled sync alive"
             git push
           fi
