@@ -4,8 +4,10 @@ name: Sync site data
 # Also makes a tiny keep-alive commit if the repo has been quiet for 40+ days, so GitHub never pauses the schedule.
 on:
   schedule:
-    - cron: "*/10 * * * *"
+    - cron: "*/5 * * * *"
   workflow_dispatch:
+  repository_dispatch:
+    types: [site-content-updated]
 
 permissions:
   contents: write
