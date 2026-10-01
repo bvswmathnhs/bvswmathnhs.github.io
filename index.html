@@ -10,8 +10,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
 <link rel="stylesheet" href="assets/style.css">
+<style>body.home-data-loading{visibility:hidden}</style>
 </head>
-<body>
+<body class="home-data-loading">
 
 <nav class="site-nav">
   <div class="wrap">
@@ -163,5 +164,11 @@
 <script src="assets/site-content.js"></script>
 <script src="assets/quick-content.js?v=2"></script>
 <script src="assets/app.js"></script>
+<script>
+// Never keep the page hidden more than 1.5s waiting on data; static content is already in the HTML.
+var reveal=function(){document.body.classList.remove("home-data-loading")};
+setTimeout(reveal,1500);
+Promise.all([window.siteContentReady,window.quickContentReady]).then(reveal,reveal);
+</script>
 </body>
 </html>
