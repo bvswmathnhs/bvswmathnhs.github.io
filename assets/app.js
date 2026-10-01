@@ -6,13 +6,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     toggle.addEventListener("click", () => links.classList.toggle("open"));
   }
 
-  // Highlight current page in nav
-  const path = location.pathname.split("/").pop() || "index.html";
+  // Highlight current page in nav (works with or without ".html" in the URL, e.g. /events or /events.html)
+  const pageName = (p) => (String(p).split(/[?#]/)[0].split("/").filter(Boolean).pop() || "index").replace(/\.html$/i, "");
+  const current = pageName(location.pathname);
   document.querySelectorAll(".nav-links a").forEach((a) => {
-    const href = a.getAttribute("href");
-    if (href === path || (path === "" && href === "index.html")) {
-      a.classList.add("active");
-    }
+    if (pageName(a.getAttribute("href") || "") === current) a.classList.add("active");
   });
 
   // Hero slider ("Upcoming")

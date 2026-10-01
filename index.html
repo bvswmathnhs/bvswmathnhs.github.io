@@ -10,9 +10,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
 <link rel="stylesheet" href="assets/style.css">
-<style>body.home-data-loading{visibility:hidden}</style>
 </head>
-<body class="home-data-loading">
+<body>
 
 <nav class="site-nav">
   <div class="wrap">
@@ -52,23 +51,10 @@
     <p class="eyebrow" style="justify-content:center;">Club updates</p>
     <div class="slider-track" id="upcomingSlider">
       <div class="slide active">
-        <span class="tag">Event</span>
+        <span class="tag">Dues</span>
         <div class="body">
-          <h3>Pi Day Volunteering</h3>
-          <p>8 points for volunteering, 4 points per prep day. Exact volunteer dates will be announced closer to March.</p>
-        </div>
-      </div>
-      <div class="slide">
-        <span class="tag">Points</span>
-        <div class="body">
-          <h3>Monthly poster point opportunity</h3>
-          <p>Posters are optional. Submit one math-themed 8.5×11&quot; poster as a .jpg during the month to earn 1 point.</p>
-        </div>
-      </div><div class="slide">
-        <span class="tag">Meetings</span>
-        <div class="body">
-          <h3>Monthly club meetings</h3>
-          <p>Get updates, meet math-field professionals, and join member-led games and activities.</p>
+          <h3>Club Dues</h3>
+          <p>Pay your Math NHS required club dues by October 9th!</p>
         </div>
       </div>
     </div>
@@ -112,7 +98,7 @@
       </div>
     </div>
 
-    <a class="btn btn-navy section-action" data-points-tracker href="https://docs.google.com/spreadsheets/d/1Z-l6_yCCz1bEhTicIFYdUuqfVp-BdunP-K42OmWCQtg/edit?usp=sharing" target="_blank" rel="noopener">Open the points tracker &rarr;</a>
+    <a class="btn btn-navy section-action" data-points-tracker href="https://docs.google.com/spreadsheets/d/1nQfZJ23kTfMSx9IZ9zmNSWxmQz9ejl50tuKPw0_iP4w/edit?usp=sharing" target="_blank" rel="noopener">Open the points tracker &rarr;</a>
   </div>
 </section>
 
@@ -177,11 +163,5 @@
 <script src="assets/site-content.js"></script>
 <script src="assets/quick-content.js?v=2"></script>
 <script src="assets/app.js"></script>
-<script>
-// Never keep the page hidden more than 1.5s waiting on data; static content is already in the HTML.
-var reveal=function(){document.body.classList.remove("home-data-loading")};
-setTimeout(reveal,1500);
-Promise.all([window.siteContentReady,window.quickContentReady]).then(reveal,reveal);
-</script>
 </body>
 </html>
