@@ -29,7 +29,6 @@
     <button class="active" data-tab="meetings">Meeting notes</button>
     <button data-tab="board">Board members</button>
     <button data-tab="links">Important links</button>
-    <button data-tab="inbox">Board inbox</button>
   </div>
 
   <section id="tab-meetings" class="tab">
@@ -68,15 +67,6 @@
     </div>
   </section>
 
-  <section id="tab-inbox" class="tab" hidden>
-    <div class="panel">
-      <h2>Board inbox</h2>
-      <p class="muted">Messages submitted through the site's contact form appear here.</p>
-      <div class="actions"><button id="showNewMessages" class="btn btn-navy" type="button">New</button><button id="showAllMessages" class="btn btn-outline" type="button">All</button><button id="refreshMessages" class="btn btn-outline" type="button">Refresh</button></div>
-      <p id="inboxMsg" class="status"></p>
-      <div id="inboxList"></div>
-    </div>
-  </section>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="assets/supabase-config.js"></script>
@@ -167,32 +157,7 @@ document.getElementById('saveSlides').onclick=async()=>{
  msg('slidesMsg','Saved.','ok');
 };
 
-let inboxFilter='new';
 function chicagoDisplay(value){if(!value)return'Not provided';return new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',weekday:'short',month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}).format(new Date(value))}
-async function loadInbox(){
- const list=document.getElementById('inboxList'),status=document.getElementById('inboxMsg');
- list.innerHTML='<div class="empty">Loading messages…</div>';status.textContent='';
- let q=sb.from('contact_messages').select('id,name,email,message,page_path,status,created_at,read_at').order('created_at',{ascending:false});
- if(inboxFilter==='new')q=q.eq('status','new');
- const {data,error}=await q;
- if(error){list.innerHTML='';status.textContent='Could not load messages: '+error.message;status.className='status err';return}
- if(!data?.length){list.innerHTML=`<div class="empty">No ${inboxFilter==='new'?'new ':''}messages right now.</div>`;return}
- list.innerHTML=data.map(row=>`<div class="msg-card" data-id="${row.id}">
-  <div class="msg-top"><div><span class="msg-status ${esc(row.status)}">${esc(row.status)}</span><h3 style="margin:4px 0">${esc(row.name)}</h3><a href="mailto:${encodeURIComponent(row.email||'')}">${esc(row.email||'No email')}</a></div><span class="hint">${esc(chicagoDisplay(row.created_at))}</span></div>
-  <p class="msg-body">${esc(row.message)}</p>
-  <p class="msg-source">Sent from ${esc(row.page_path||'the website')}</p>
-  ${row.status==='new'?'<button class="btn btn-outline mark-read" type="button">Mark as read</button>':''}
- </div>`).join('');
-}
-document.getElementById('inboxList').addEventListener('click',async e=>{
- const btn=e.target.closest('.mark-read');if(!btn)return;const card=e.target.closest('.msg-card');btn.disabled=true;
- const {error}=await sb.from('contact_messages').update({status:'read',read_at:new Date().toISOString()}).eq('id',Number(card.dataset.id));
- if(error){btn.disabled=false;return}
- loadInbox();
-});
-document.getElementById('showNewMessages').onclick=()=>{inboxFilter='new';document.getElementById('showNewMessages').className='btn btn-navy';document.getElementById('showAllMessages').className='btn btn-outline';loadInbox()};
-document.getElementById('showAllMessages').onclick=()=>{inboxFilter='all';document.getElementById('showNewMessages').className='btn btn-outline';document.getElementById('showAllMessages').className='btn btn-navy';loadInbox()};
-document.getElementById('refreshMessages').onclick=loadInbox;
 
 async function load(){
  const [{data:c,error:ce},{data:ms,error:me},{data:sl}]=await Promise.all([
@@ -201,7 +166,7 @@ async function load(){
   sb.from('current_slides').select('embed_url').eq('id',1).maybeSingle()
  ]);
  if(ce)throw ce;if(me)throw me;content=c||{};content.board_members=Array.isArray(content.board_members)?content.board_members:[];content.important_links=Array.isArray(content.important_links)?content.important_links:[];
- meetings=ms||[];content.poster=content.poster&&typeof content.poster==='object'?content.poster:{};document.getElementById('posterLink').value=content.poster.link_url||'';document.getElementById('slidesEmbedUrl').value=sl?.embed_url||'';renderBoard();renderLinks();renderMeetings();loadInbox();document.getElementById('editor').hidden=false;document.getElementById('gate').hidden=true;
+ meetings=ms||[];content.poster=content.poster&&typeof content.poster==='object'?content.poster:{};document.getElementById('posterLink').value=content.poster.link_url||'';document.getElementById('slidesEmbedUrl').value=sl?.embed_url||'';renderBoard();renderLinks();renderMeetings();document.getElementById('editor').hidden=false;document.getElementById('gate').hidden=true;
 }
 async function openEditor(u){const {data:o}=await sb.from('officers').select('user_id').eq('user_id',u.id).maybeSingle();if(!o){await sb.auth.signOut();throw new Error('This account is not registered as a Math NHS officer.')}await load()}
 document.getElementById('gate').onsubmit=async e=>{e.preventDefault();msg('gateMsg','Signing in…');const {data,error}=await sb.auth.signInWithPassword({email:email.value.trim(),password:password.value});if(error||!data.user)return msg('gateMsg',error?.message||'Sign in failed','err');try{await openEditor(data.user)}catch(x){msg('gateMsg',x.message,'err')}};
