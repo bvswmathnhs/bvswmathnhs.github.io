@@ -2,9 +2,15 @@
 // Uses plain fetch against the REST API, so no CDN script is needed. Skipped if the real library is already loaded.
 // If the live site_content request fails or is blocked (e.g. school web filters), it falls back to the
 // same-origin snapshot assets/site-data.json.
+//
+// SNAPSHOT-ONLY MODE: set window.SNAPSHOT_ONLY = true before loading this script and site_content is read
+// only from the same-origin snapshot (kept in sync with Supabase by the GitHub Action). No request is ever
+// made to supabase.co for it, and the snapshot fetch starts immediately when this script runs.
 (function () {
   if (window.supabase) return;
   var cache = {};
+  var SNAPSHOT_ONLY = window.SNAPSHOT_ONLY === true;
+  if (SNAPSHOT_ONLY) cache['site_content?id=eq.1'] = snapshot();
 
   function request(path, options, timeoutMs) {
     var ctrl = new AbortController();
@@ -53,15 +59,19 @@
             var key = table + '?' + qs;
             // One data load per table/filter, shared by every caller on the page.
             if (!cache[key]) {
-              cache[key] = request(table + '?select=*&' + qs + '&limit=1', {}, 3000)
-                .then(function (res) {
-                  if (!res.ok) throw new Error('HTTP ' + res.status);
-                  return res.json();
-                })
-                .catch(function (err) {
-                  if (table === 'site_content') return snapshot();
-                  throw err;
-                });
+              if (SNAPSHOT_ONLY && table === 'site_content') {
+                cache[key] = snapshot();
+              } else {
+                cache[key] = request(table + '?select=*&' + qs + '&limit=1', {}, 3000)
+                  .then(function (res) {
+                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                    return res.json();
+                  })
+                  .catch(function (err) {
+                    if (table === 'site_content') return snapshot();
+                    throw err;
+                  });
+              }
             }
             return cache[key].then(
               function (rows) { return { data: pick(rows && rows[0] || null, cols), error: null }; },
