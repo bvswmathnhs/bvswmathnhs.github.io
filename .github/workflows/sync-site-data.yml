@@ -1,6 +1,8 @@
 name: Sync site data
 
 # Keeps assets/site-data.json and assets/meetings-data.json (same-origin fallbacks for networks that block supabase.co) in sync with the database.
+# Triggers: (1) a Supabase database trigger fires repository_dispatch right after an editor save (needs the github_dispatch_token Vault secret),
+# (2) the manual "Run workflow" button, (3) a best-effort 5-minute schedule (GitHub may delay it by hours).
 # Also makes a tiny keep-alive commit if the repo has been quiet for 40+ days, so GitHub never pauses the schedule.
 on:
   schedule:
@@ -11,6 +13,11 @@ on:
 
 permissions:
   contents: write
+
+# Run one sync at a time; if several saves arrive back to back, the newest queued run still executes after the current one.
+concurrency:
+  group: sync-site-data
+  cancel-in-progress: false
 
 jobs:
   sync:
