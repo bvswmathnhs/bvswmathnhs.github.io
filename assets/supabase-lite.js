@@ -1,11 +1,10 @@
 // Minimal drop-in for the few supabase-js calls the public pages use (select().eq().maybeSingle() and insert()).
 // Uses plain fetch against the REST API, so no CDN script is needed. Skipped if the real library is already loaded.
-// If the live site_content request fails or is blocked (e.g. school web filters), it falls back to the
-// same-origin snapshot assets/site-data.json.
 //
-// SNAPSHOT-ONLY MODE: set window.SNAPSHOT_ONLY = true before loading this script and site_content is read
-// only from the same-origin snapshot (kept in sync with Supabase by the GitHub Action). No request is ever
-// made to supabase.co for it, and the snapshot fetch starts immediately when this script runs.
+// SNAPSHOT-ONLY MODE (what every public page uses): window.SNAPSHOT_ONLY = true is set in each page's <head>,
+// together with window.__siteSnap, a fetch of the same-origin snapshot assets/site-data.json started at the very
+// top of the page. site_content is then read only from that snapshot (kept in sync with Supabase by the GitHub
+// Action). No request is ever made to supabase.co for it. Without the flag it falls back to live-first.
 (function () {
   if (window.supabase) return;
   var cache = {};
@@ -27,13 +26,17 @@
     }).finally(function () { clearTimeout(timer); });
   }
 
+  // Reuses the fetch the page started in <head> (window.__siteSnap); retries once on failure.
   function snapshot() {
-    return fetch(new URL('assets/site-data.json', document.baseURI).href, { cache: 'no-cache' })
-      .then(function (res) {
-        if (!res.ok) throw new Error('snapshot HTTP ' + res.status);
-        return res.json();
-      })
-      .then(function (row) { return [row]; });
+    var fresh = function () {
+      return fetch(new URL('assets/site-data.json', document.baseURI).href, { cache: 'no-cache' })
+        .then(function (res) {
+          if (!res.ok) throw new Error('snapshot HTTP ' + res.status);
+          return res.json();
+        });
+    };
+    var first = window.__siteSnap;
+    return (first ? first.catch(fresh) : fresh()).then(function (row) { return [row]; });
   }
 
   function pick(row, cols) {

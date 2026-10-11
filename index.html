@@ -3,6 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+// Start fetching the snapshot immediately (before CSS/JS load) and keep the page hidden until it is applied.
+(function(){var d=document.documentElement,w=window;w.SNAPSHOT_ONLY=true;
+var go=function(p){return fetch(new URL(p,document.baseURI).href,{cache:'no-cache'}).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json()})};
+w.__siteSnap=go('assets/site-data.json');w.__siteSnap.catch(function(){});
+setTimeout(function(){d.classList.remove('data-loading')},1500);d.classList.add('data-loading');})();
+</script>
+<style>html.data-loading body{visibility:hidden}</style>
 <title>BVSW Math NHS</title>
 <link rel="icon" type="image/png" href="assets/math-nhs-logo.png">
 <meta name="description" content="Blue Valley Southwest Math National Honor Society — meetings, events, points opportunities, and more.">
@@ -10,9 +18,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
 <link rel="stylesheet" href="assets/style.css">
-<style>body.home-data-loading{visibility:hidden}</style>
 </head>
-<body class="home-data-loading">
+<body>
 
 <nav class="site-nav">
   <div class="wrap">
@@ -155,16 +162,13 @@
 </footer>
 
 <script src="assets/supabase-config.js"></script>
-<script>window.SNAPSHOT_ONLY=true;</script>
-<script src="assets/supabase-lite.js?v=3"></script>
+<script src="assets/supabase-lite.js?v=4"></script>
 <script src="assets/site-content.js"></script>
 <script src="assets/quick-content.js?v=2"></script>
 <script src="assets/app.js"></script>
 <script>
-// Never keep the page hidden more than 1.5s waiting on data; static content is already in the HTML.
-var reveal=function(){document.body.classList.remove("home-data-loading")};
-setTimeout(reveal,1500);
-Promise.all([window.siteContentReady,window.quickContentReady]).then(reveal,reveal);
+// Reveal as soon as the data is applied (the head script also reveals after 1.5s no matter what).
+(function(){var r=function(){document.documentElement.classList.remove('data-loading')};Promise.all([window.siteContentReady,window.quickContentReady,window.pageReady]).then(r,r)})();
 </script>
 </body>
 </html>
