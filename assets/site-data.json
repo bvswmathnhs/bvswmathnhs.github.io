@@ -2,9 +2,9 @@
   "id": 1,
   "announcements": [
     {
-      "tag": "Dues",
-      "title": "Club Dues",
-      "description": "Pay your Math NHS required club dues by October 9th!"
+      "tag": "Point Opportunity",
+      "title": "October Poster Submissions Open Now!",
+      "description": "Submit an October poster for 1 point!"
     }
   ],
   "poster": {
@@ -48,7 +48,7 @@
       "email": "njheinen@bluevalleyk12.net"
     }
   ],
-  "updated_at": "2026-10-09T02:39:44.849+00:00",
+  "updated_at": "2026-10-11T22:51:42.047+00:00",
   "upcoming_event": {
     "date": "",
     "time": "",
@@ -200,9 +200,9 @@
   },
   "important_links": [
     {
-      "url": "https://www.signupgenius.com/go/10C0E49ABAC2AA4FEC61-66078151-mathletics#/",
-      "title": "Mathletics Volunteer Sign Up",
-      "description": "Volunteers will help grade paper scores during the Liberty View Mathletics competition. The competition includes elementary students from Liberty View and Morse who are from 3rd to 5th grade."
+      "url": "https://bvswmathnhs.github.io/posters.html",
+      "title": "October Poster",
+      "description": "Poster Submissions Up Now!"
     },
     {
       "url": "https://docs.google.com/forms/d/e/1FAIpQLSc1DMLmggb8KAN-jfnRlZaaa9_NRUxFoag09IJsIGYXcPbZvw/viewform",
