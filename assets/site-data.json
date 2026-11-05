@@ -2,9 +2,9 @@
   "id": 1,
   "announcements": [
     {
-      "tag": "Point Opportunity",
-      "title": "October Poster Submissions Open Now!",
-      "description": "Submit an October poster for 1 point!"
+      "tag": "Fair",
+      "title": "Stem Fair",
+      "description": "More information around STEM fair will be available soon!"
     }
   ],
   "poster": {
@@ -48,7 +48,7 @@
       "email": "njheinen@bluevalleyk12.net"
     }
   ],
-  "updated_at": "2026-11-05T00:26:24.752+00:00",
+  "updated_at": "2026-11-05T00:30:00.84+00:00",
   "upcoming_event": {
     "date": "",
     "time": "",
