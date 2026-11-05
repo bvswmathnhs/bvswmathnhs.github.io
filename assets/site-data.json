@@ -8,10 +8,10 @@
     }
   ],
   "poster": {
-    "due": "October submission",
+    "due": "Submissions are now closed",
     "month": "October poster",
     "theme": "Make math worth stopping for",
-    "link_url": "https://docs.google.com/forms/u/0/d/16QxjmqSRoFvRvEXacYPsJd-98byCr1jzR40uykBhsxw/viewform?pli=1&usp=drivesdk&pli=1&authuser=0&edit_requested=true",
+    "link_url": "",
     "description": "Design a fun math problem, brain teaser, or joke that can challenge someone, make them think, or make them laugh between classes. Posters are worth 1 point, with one submission allowed per month."
   },
   "points_tracker_url": "https://docs.google.com/spreadsheets/d/1nQfZJ23kTfMSx9IZ9zmNSWxmQz9ejl50tuKPw0_iP4w/edit?usp=sharing",
@@ -48,7 +48,7 @@
       "email": "njheinen@bluevalleyk12.net"
     }
   ],
-  "updated_at": "2026-10-11T22:51:42.047+00:00",
+  "updated_at": "2026-11-05T00:26:24.752+00:00",
   "upcoming_event": {
     "date": "",
     "time": "",
@@ -128,7 +128,7 @@
         "kicker": "Happening Now",
         "link_url": "https://docs.google.com/forms/d/e/1FAIpQLSd4BYPARoaqzxafpLJXs1Dmgtj6lYgjCQT1j8RAdYD4wdgm1Q/viewform",
         "link_label": "Submission form",
-        "description": "At the start of each year, members submit designs and earn bonus points for winning or placing as a runner-up. The winning design decides what we wear to every event for the rest of the year.\n\nThis event is happening now! Visit the provided submission link to upload your Canva design for consideration!"
+        "description": "At the start of each year, members submit designs and earn bonus points for winning or placing as a runner-up. The winning design decides what we wear to every event for the rest of the year."
       },
       {
         "title": "Math Posters",
@@ -200,9 +200,9 @@
   },
   "important_links": [
     {
-      "url": "https://bvswmathnhs.github.io/posters.html",
-      "title": "October Poster",
-      "description": "Poster Submissions Up Now!"
+      "url": "",
+      "title": "",
+      "description": ""
     },
     {
       "url": "https://docs.google.com/forms/d/e/1FAIpQLSc1DMLmggb8KAN-jfnRlZaaa9_NRUxFoag09IJsIGYXcPbZvw/viewform",
@@ -210,9 +210,9 @@
       "description": "Pick up to 3 types of STEM careers that you would like to hear from during a Math NHS Meeting!"
     },
     {
-      "url": "https://forms.gle/rpqAA3xkngjyejdW8",
+      "url": "",
       "title": "T-Shirt Design Submission 26-27",
-      "description": "Requirements in Google Form. Due October 31st!"
+      "description": "Submissions are now closed!"
     },
     {
       "url": "https://bvk12.schoolcashonline.com/Fee/Details/8560/573/False/True",
