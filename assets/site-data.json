@@ -48,30 +48,39 @@
       "email": "njheinen@bluevalleyk12.net"
     }
   ],
-  "updated_at": "2026-11-10T18:35:21.471+00:00",
+  "updated_at": "2026-11-10T19:04:30.876+00:00",
   "upcoming_event": {
-    "date": "",
-    "time": "",
-    "title": "wdwsd",
-    "kicker": "Featured event",
-    "points": "",
-    "status": "Coming soon",
+    "date": "December 2nd",
+    "time": "5:00-7:00",
+    "title": "Stem Fair",
+    "kicker": "Stem Fair",
+    "points": "8 Points",
+    "status": "Dec 2",
     "contact": "",
     "details": "",
-    "summary": "Short intro",
-    "visible": false,
+    "summary": "Joint event between Science and Math NHS on December 2nd in the Commons! Create groups of 3-5 and submit your idea to be approved below!",
+    "visible": true,
     "hero_url": "",
-    "location": "",
-    "schedule": [],
+    "location": "BVSW Commons",
+    "schedule": [
+      {
+        "time": "Prep Day #1",
+        "label": "November 17, 3-5 pm, Mrs. Browns's Room (Room 511)"
+      },
+      {
+        "time": "Prep Day #2",
+        "label": "November 30, 3-5 pm, Mrs. Browns's Room (Room 511)"
+      }
+    ],
     "sections": {
       "poster": false,
-      "overview": false,
-      "schedule": false,
+      "overview": true,
+      "schedule": true,
       "requirements": false
     },
-    "nav_label": "Upcoming Events",
+    "nav_label": "Stem Fair",
     "poster_url": "",
-    "signup_url": "https://wdswd/",
+    "signup_url": "https://tinyurl.com/bvswstemfair",
     "requirements": [],
     "signup_label": "Applications open here"
   },
