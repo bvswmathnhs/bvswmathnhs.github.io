@@ -63,7 +63,10 @@
 
   function safeHttpsUrl(rawUrl) {
     try {
-      const url = new URL(String(rawUrl || ""));
+      let raw = String(rawUrl || "").trim();
+      // Links typed without a scheme (e.g. tinyurl.com/abc) are treated as https.
+      if (raw && !/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(raw) && /^[^\s\/]+\.[^\s\/]+/.test(raw)) raw = "https://" + raw;
+      const url = new URL(raw);
       return url.protocol === "https:" ? url.toString() : "";
     } catch {
       return "";
