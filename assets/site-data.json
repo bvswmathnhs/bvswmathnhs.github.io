@@ -48,7 +48,7 @@
       "email": "njheinen@bluevalleyk12.net"
     }
   ],
-  "updated_at": "2026-11-10T19:04:30.876+00:00",
+  "updated_at": "2026-11-10T19:06:57.874+00:00",
   "upcoming_event": {
     "date": "December 2nd",
     "time": "5:00-7:00",
@@ -60,7 +60,7 @@
     "details": "",
     "summary": "Joint event between Science and Math NHS on December 2nd in the Commons! Create groups of 3-5 and submit your idea to be approved below!",
     "visible": true,
-    "hero_url": "",
+    "hero_url": "https://rydpwtehxjgmshpaxlbj.supabase.co/storage/v1/object/public/site-assets/upcoming/1794337613884-ba267294-9998-41c7-bf29-2a9fddc6439b.png",
     "location": "BVSW Commons",
     "schedule": [
       {
