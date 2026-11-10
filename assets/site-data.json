@@ -11,7 +11,7 @@
     "due": "Submissions are now closed",
     "month": "October poster",
     "theme": "Make math worth stopping for",
-    "link_url": "",
+    "link_url": "tinyurl.com/mnhsnovposter",
     "description": "Design a fun math problem, brain teaser, or joke that can challenge someone, make them think, or make them laugh between classes. Posters are worth 1 point, with one submission allowed per month."
   },
   "points_tracker_url": "https://docs.google.com/spreadsheets/d/1nQfZJ23kTfMSx9IZ9zmNSWxmQz9ejl50tuKPw0_iP4w/edit?usp=sharing",
@@ -48,7 +48,7 @@
       "email": "njheinen@bluevalleyk12.net"
     }
   ],
-  "updated_at": "2026-11-05T00:30:00.84+00:00",
+  "updated_at": "2026-11-10T18:35:21.471+00:00",
   "upcoming_event": {
     "date": "",
     "time": "",
@@ -200,9 +200,9 @@
   },
   "important_links": [
     {
-      "url": "",
-      "title": "",
-      "description": ""
+      "url": "tinyurl.com/bvswstemfair",
+      "title": "Stem Fair",
+      "description": "Use this link to submit your idea for your group's Stem Fair exhibition! Exhibitions cannot use any latex."
     },
     {
       "url": "https://docs.google.com/forms/d/e/1FAIpQLSc1DMLmggb8KAN-jfnRlZaaa9_NRUxFoag09IJsIGYXcPbZvw/viewform",
@@ -210,9 +210,9 @@
       "description": "Pick up to 3 types of STEM careers that you would like to hear from during a Math NHS Meeting!"
     },
     {
-      "url": "",
-      "title": "T-Shirt Design Submission 26-27",
-      "description": "Submissions are now closed!"
+      "url": "tinyurl.com/mnhsTShirt",
+      "title": "T-Shirt Design Vote",
+      "description": "Vote for your favorite T-Shirt Design!"
     },
     {
       "url": "https://bvk12.schoolcashonline.com/Fee/Details/8560/573/False/True",
