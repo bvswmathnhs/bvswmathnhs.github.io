@@ -4,7 +4,12 @@
     {
       "tag": "Fair",
       "title": "Stem Fair",
-      "description": "More information around STEM fair will be available soon!"
+      "description": "Information + Links for STEM Fair available below and STEM fair tab!"
+    },
+    {
+      "tag": "Vote",
+      "title": "Vote for T-Shirt",
+      "description": "Vote for your favorite Math NHS T-Shirt!"
     }
   ],
   "poster": {
@@ -48,7 +53,7 @@
       "email": "njheinen@bluevalleyk12.net"
     }
   ],
-  "updated_at": "2026-11-12T15:18:16.031+00:00",
+  "updated_at": "2026-11-16T23:44:53.968+00:00",
   "upcoming_event": {
     "date": "December 2nd",
     "time": "5:00-7:00",
