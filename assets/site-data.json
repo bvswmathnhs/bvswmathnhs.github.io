@@ -53,7 +53,7 @@
       "email": "njheinen@bluevalleyk12.net"
     }
   ],
-  "updated_at": "2026-11-19T18:59:40.367+00:00",
+  "updated_at": "2026-11-19T19:02:32.781+00:00",
   "upcoming_event": {
     "date": "December 2nd",
     "time": "5:00-7:00",
@@ -80,7 +80,7 @@
     "sections": {
       "poster": false,
       "overview": true,
-      "schedule": true,
+      "schedule": false,
       "requirements": false
     },
     "nav_label": "Stem Fair",
